@@ -20,9 +20,9 @@ class orchestra_problem:
     def initial_points(self) -> None:
         name = self.params["function name"]
         if name == "wood":
-            self.params["x"] = normal(-5, 10, (4))
+            self.params["x"] = normal(1, 10, (4))
         if name == "rosembrock":
-            self.params["x"] = normal(-5, 2, (2))
+            self.params["x"] = normal(1, 10, (2))
 
     def solve(self):
         """
