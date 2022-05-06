@@ -12,14 +12,18 @@ class get_alpha():
         self.params = params
         if params["search name"] == "bisection":
             self.method = self.bisection
-        if params["search name"] == "back tracking":
-            self.method = self.back_tracking
-        if params["search name"] == "barzilai":
-            self.method = self.barzilai
+        if params["search name"] == "barzilai stabilized":
+            self.method = self.barzilai_stabilized
+        if params["search name"] == "ANGM":
+            self.method = self.angm
+        if params["search name"] == "ANGR1":
+            self.method = self.angr1
+        if params["search name"] == "ANGR2":
+            self.method = self.angr2
 
     def bisection(self, function: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
         # Inicialización
-        x, gradient_i = information
+        x, gradient_i, hessian = information
         x_i, x = x
         alpha = 0.0
         beta_i = inf
@@ -52,42 +56,6 @@ class get_alpha():
                 break
         return alpha_k
 
-    def back_tracking(self, function: Callable, gradient: Callable, information: array, params: dict, d: array):
-        """
-        Calcula tamaño de paso alpha
-
-            Parámetros
-            -----------
-                x_k     : Vector de valores [x_1, x_2, ..., x_n]
-                d_k     : Dirección de descenso
-                f       : Función f(x)
-                f_grad  : Función que calcula gradiente
-                alpha   : Tamaño inicial de paso
-                ro      : Ponderación de actualización
-                c1      : Condición de Armijo
-            Regresa
-            -----------
-                alpha_k : Tamaño actualizado de paso
-        """
-        # Inicialización
-        alpha_k = self.params["alpha bisection"]
-        x, gradient_i = information
-        x_i, x = x
-        dot_grad = -gradient(x, params) @ d
-        # Repetir hasta que se cumpla la condición de armijo
-        while True:
-            armijo_condition = self.obtain_armijo_condition(function,
-                                                            dot_grad,
-                                                            x,
-                                                            params,
-                                                            d,
-                                                            alpha_k)
-            if armijo_condition:
-                alpha_k = self.params["rho"] * alpha_k
-            else:
-                break
-        return alpha_k
-
     def obtain_armijo_condition(self, function: Callable, dot_grad: float, x: array, params: dict, d: array, alpha: float):
         """
         Condicion de armijo
@@ -109,8 +77,8 @@ class get_alpha():
         wolfe_condition = dfx_alpha < self.params["c2"]*dot_grad
         return wolfe_condition
 
-    def barzilai(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
-        x_list, gradient_list = information
+    def barzilai_stabilized(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
+        x_list, gradient_list, hessian_list = information
         x_i, x_j = x_list
         gradient_i, gradient_j = gradient_list
         s_k = x_j-x_i
@@ -125,3 +93,21 @@ class get_alpha():
             down = dot(y_k, y_k)
         alpha = min((up/down, delta))
         return alpha
+
+    def angm(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
+        x_list, gradient_list, hessian_list = information
+        x_i, x_j = x_list
+        gradient_i, gradient_j = gradient_list
+        hessian_i, hessian_j = hessian_list
+
+    def angr1(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
+        x_list, gradient_list, hessian_list = information
+        x_i, x_j = x_list
+        gradient_i, gradient_j = gradient_list
+        hessian_i, hessian_j = hessian_list
+
+    def angr2(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
+        x_list, gradient_list, hessian_list = information
+        x_i, x_j = x_list
+        gradient_i, gradient_j = gradient_list
+        hessian_i, hessian_j = hessian_list
