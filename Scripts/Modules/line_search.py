@@ -1,4 +1,5 @@
 from numpy import array, dot, inf
+from numpy.linalg import norm
 from typing import Callable
 
 
@@ -113,9 +114,14 @@ class get_alpha():
         x_i, x_j = x_list
         gradient_i, gradient_j = gradient_list
         s_k = x_j-x_i
+        # delta = norm(s_k)/norm(gradient_j)
+        delta = 0.1
         y_k = gradient_j-gradient_i
-        up = dot(s_k, s_k)
-        down = dot(s_k, y_k)
-        # down = dot(y_k, y_k)
-        alpha = up/down
+        if params["BB type"] == 1:
+            up = dot(s_k, s_k)
+            down = dot(s_k, y_k)
+        if params["BB type"] == 2:
+            up = dot(s_k, y_k)
+            down = dot(y_k, y_k)
+        alpha = min((up/down, delta))
         return alpha
