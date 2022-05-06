@@ -22,7 +22,7 @@ class orchestra_problem:
         if name == "wood":
             self.params["x"] = normal(1, 10, (4))
         if name == "rosembrock":
-            self.params["x"] = normal(1, 10, (2))
+            self.params["x"] = normal(1, 10, (100))
 
     def solve(self):
         """
