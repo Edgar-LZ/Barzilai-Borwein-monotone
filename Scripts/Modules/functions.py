@@ -1,4 +1,4 @@
-from numpy import array, zeros
+from numpy import array, zeros, sum, zeros_like
 
 
 class functions_class:
@@ -44,25 +44,29 @@ class functions_class:
         Funcion de Rosembrock
         """
         x = params["x"]
-        n = len(x)
-        fx = 0
-        for i in range(n-1):
-            fx += 100*(x[i+1]-x[i]*x[i])*(x[i+1]-x[i]*x[i])
-            fx += (1-x[i])*(1-x[i])
+        # x
+        x_i = x[:-1]
+        # x+1
+        x_j = x[1:]
+        fx = 100*(x_j-x_i**2)**2
+        fx += (1-x_i)**2
+        fx = sum(fx)
         return fx
 
     def gradient_rosembrock(self, x: array, params: dict) -> array:
         """
         Gradiente de Rosembrock
         """
-        n = len(x)
-        g = zeros(n)
-        i = 0
-        g[i] = -400*x[i]*(x[i+1]-x[i]*x[i])-2*(1-x[i])
-        for i in range(1, n-1):
-            g[i] = 200*(x[i]-x[i-1]*x[i-1])
-            g[i] += -400*x[i] * (x[i+1]-x[i]*x[i])
-            g[i] += -2*(1-x[i])
-        i = n-1
-        g[i] = 200*(x[i]-x[i-1]*x[i-1])
+        g = zeros_like(x)
+        # x-1
+        x_i = x[:-2]
+        # x
+        x_j = x[1:-1]
+        # x+1
+        x_k = x[2:]
+        g[1:-1] = 200*(x_j-x_i**2)
+        g[1:-1] = -400*x_j*(x_k-x_j**2)
+        g[1:-1] = -2*(1-x_j)
+        g[0] = -400*x[0]*(x[1]-x[0]**2)-2*(1-x[0])
+        g[-1] = 200*(x[-1]-x[-2]**2)
         return g

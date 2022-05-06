@@ -23,7 +23,7 @@ class algorithm_class:
         self.stop_functions = stop_functions(params["tau"])
         # Eleccion del metodo
         if params["search algorithm"] == "barzilai":
-            self.method = self.descent_gradient_with_barzalai
+            self.method = self.descent_gradient_with_barzilai
         if params["search algorithm"] != "barzilai":
             self.method = self.descent_gradient
 
@@ -46,7 +46,7 @@ class algorithm_class:
 
     def descent_gradient(self):
         """
-        Metodo del descenso del gradiente con paso de barzalai
+        Metodo del descenso del gradiente con paso de barzilai
         """
         # Inicializacion del vector de resultado
         function = self.function.f
@@ -81,9 +81,9 @@ class algorithm_class:
                 break
             iteration += 1
 
-    def descent_gradient_with_barzalai(self):
+    def descent_gradient_with_barzilai(self):
         """
-        Metodo del descenso del gradiente con paso de barzalai
+        Metodo del descenso del gradiente con paso de barzilai
         """
         # Inicializacion del vector de resultado
         function = self.function.f
@@ -94,7 +94,7 @@ class algorithm_class:
         gradient_k = gradient(x_k, self.params)
         gradient_i = gradient_k.copy()
         while(True):
-            self.alpha_method_for_barzalai(iteration)
+            self.alpha_method_for_barzilai(iteration)
             x_i = x_j.copy()
             if iteration != 1:
                 gradient_i = gradient_j.copy()
@@ -127,7 +127,7 @@ class algorithm_class:
                 break
             iteration += 1
 
-    def alpha_method_for_barzalai(self, iteration: int) -> None:
+    def alpha_method_for_barzilai(self, iteration: int) -> None:
         # Guardado del paso anterior
         if iteration == 1 or self.params["search name"] == "bisection":
             self.select_get_alpha_method("bisection")
