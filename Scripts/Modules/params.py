@@ -4,7 +4,6 @@ def get_params() -> dict:
         "path results": "Results",
         "function name": "wood",
         "method": "barzilai",
-        "BB type": 1,
         "max iterations": 1e5,
         "c1": 1e-4,
         "c2": 0.9,
@@ -17,7 +16,8 @@ def get_params() -> dict:
 def _define_search_methods(params) -> dict:
     methods = {
         "barzilai": {"search algorithm": "barzilai",
-                     "search name": "barzilai"},
+                     "search name": "barzilai",
+                     "BB type": 1, },
         "steepest": {"search algorithm": "steepest",
                      "search name": "bisection"},
     }
