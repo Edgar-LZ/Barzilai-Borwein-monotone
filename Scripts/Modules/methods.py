@@ -21,11 +21,18 @@ class algorithm_class:
         self.get_alpha = get_alpha(params)
         # Funciones para detener el metodo
         self.stop_functions = stop_functions(params["tau"])
+        self.get_barzilai_methods()
         # Eleccion del metodo
-        if params["search algorithm"] == "barzilai":
+        if params["search algorithm"] in self.barzilai_methods:
             self.method = self.descent_gradient_with_barzilai
-        if params["search algorithm"] != "barzilai":
+        if params["search algorithm"] not in self.barzilai_methods:
             self.method = self.descent_gradient
+
+    def get_barzilai_methods(self) -> list:
+        self.barzilai_methods = ["barzilai",
+                                 "ANGM",
+                                 "ANGR1"
+                                 "ANGR2"]
 
     def create_results_dataframe(self) -> DataFrame:
         self.results = DataFrame(columns=["Function",
@@ -53,6 +60,7 @@ class algorithm_class:
         gradient = self.function.gradient
         iteration = 1
         x_j = self.params["x"].copy()
+        hessian_dummy = 0
         while(True):
             # Guardado del paso anterior
             x_i = x_j.copy()
@@ -60,7 +68,8 @@ class algorithm_class:
             gradient_i = -gradient(x_i, self.params)
             # Siguiente paso
             information = [[x_j, x_j],
-                           [gradient_i, gradient_i]]
+                           [gradient_i, gradient_i],
+                           [hessian_dummy, hessian_dummy]]
             alpha = self.get_alpha.method(function,
                                           gradient,
                                           information,
@@ -93,6 +102,7 @@ class algorithm_class:
         x_k = self.params["x"].copy()
         gradient_k = gradient(x_k, self.params)
         gradient_i = gradient_k.copy()
+        hessian_dummy = 0
         while(True):
             self.alpha_method_for_barzilai(iteration)
             x_i = x_j.copy()
@@ -105,7 +115,8 @@ class algorithm_class:
             gradient_d = -gradient(x_j, self.params)
             # Siguiente paso
             information = [[x_i, x_j],
-                           [gradient_i, gradient_j]]
+                           [gradient_i, gradient_j],
+                           [hessian_dummy, hessian_dummy]]
             alpha = self.get_alpha.method(function,
                                           gradient,
                                           information,
@@ -132,7 +143,7 @@ class algorithm_class:
         if iteration == 1 or self.params["search name"] == "bisection":
             self.select_get_alpha_method("bisection")
         else:
-            self.select_get_alpha_method("barzilai")
+            self.select_get_alpha_method(self.params["search name"])
 
     def select_get_alpha_method(self, method_name: str) -> None:
         params_copy = self.params.copy()
