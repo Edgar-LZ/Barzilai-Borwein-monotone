@@ -2,7 +2,7 @@ def get_params() -> dict:
     params = {
         "path graphics": "Graphics",
         "path results": "Results",
-        "function name": "wood",
+        "function name": "rosembrock",
         "method": "barzilai",
         "max iterations": 1e5,
         "c1": 1e-4,

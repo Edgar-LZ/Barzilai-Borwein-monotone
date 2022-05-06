@@ -12,7 +12,7 @@ class get_alpha():
         self.params = params
         if params["search name"] == "bisection":
             self.method = self.bisection
-        if params["search name"] == "barzilai stabilized":
+        if params["search name"] == "barzilai":
             self.method = self.barzilai_stabilized
         if params["search name"] == "ANGM":
             self.method = self.angm
