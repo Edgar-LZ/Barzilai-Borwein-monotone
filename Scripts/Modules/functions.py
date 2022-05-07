@@ -1,4 +1,4 @@
-from numpy import array, fill_diagonal, zeros, sum, zeros_like, log10
+from numpy import array, fill_diagonal, matrix, zeros, sum, zeros_like, log10, eye
 
 
 class functions_class:
@@ -20,6 +20,10 @@ class functions_class:
             self.f = self.function_paper
             self.gradient = self.gradient_paper
             self.hessian = self.hessian_paper
+        if name == "quadratic":
+            self.f = self.function_quadratic_paper
+            self.gradient = self.gradient_quadratic_paper
+            self.hessian = self.hessian_quadratic_paper
 
     def f_wood(self, params: dict) -> float:
         """
@@ -141,4 +145,24 @@ class functions_class:
                    for j in range(1, n+1)])
         matrix = zeros((n, n))
         fill_diagonal(matrix, a)
+        return matrix
+
+    def function_quadratic_paper(self, params: dict) -> float:
+        x = params["x"]
+        matrix = self._get_quadratic_matrix_paper(params)
+        f = x@matrix@x/2
+        return f
+
+    def gradient_quadratic_paper(self, x: array, params: dict) -> array:
+        matrix = self._get_quadratic_matrix_paper(params)
+        g = matrix@x
+        return g
+
+    def hessian_quadratic_paper(self, x: array, params: dict) -> array:
+        matrix = self._get_quadratic_matrix_paper(params)
+        return matrix
+
+    def _get_quadratic_matrix_paper(self, params: dict) -> array:
+        matrix = eye(2)
+        matrix[1, 1] = params["lambda"]
         return matrix
