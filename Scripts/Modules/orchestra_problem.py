@@ -1,5 +1,6 @@
 from .methods import algorithm_class
 from os import makedirs as mkdir
+from numpy.random import normal
 from numpy import array, ones
 from os.path import join
 
@@ -25,6 +26,8 @@ class orchestra_problem:
             self.params["x"] = ones(100)
             self.params["x"][0] = -1.2
             self.params["x"][-2] = -1.2
+        if name == "paper":
+            self.params["x"] = array([10 for i in range(10)])
 
     def solve(self):
         """

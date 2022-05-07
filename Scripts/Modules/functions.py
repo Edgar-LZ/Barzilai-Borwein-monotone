@@ -1,4 +1,4 @@
-from numpy import array, zeros, sum, zeros_like
+from numpy import array, fill_diagonal, zeros, sum, zeros_like, log10
 
 
 class functions_class:
@@ -16,6 +16,10 @@ class functions_class:
             self.f = self.f_rosembrock
             self.gradient = self.gradient_rosembrock
             self.hessian = self.hessian_rosembrock
+        if name == "paper":
+            self.f = self.function_paper
+            self.gradient = self.gradient_paper
+            self.hessian = self.hessian_paper
 
     def f_wood(self, params: dict) -> float:
         """
@@ -103,3 +107,38 @@ class functions_class:
             h[i][i+1] = h[i+1][i] = -400 * x[i]
         h[n-1][n-1] = 200.0
         return h
+
+    def function_paper(self, params: dict) -> float:
+        """
+        Funcion definida en el paper 
+        Ecuacion 10
+        """
+        x = params["x"]
+        matrix = self._get_matriz_paper()
+        f = x@matrix@x/2
+        return f
+
+    def gradient_paper(self, x: array, params: dict) -> array:
+        """
+        Gradiente de la ecuación definida en el paper
+        """
+        matrix = self._get_matriz_paper()
+        g = matrix@x
+        return g
+
+    def hessian_paper(self, x: array, params: dict) -> array:
+        """
+        Hessiano de la ecuacion definida en el paper
+        """
+        matrix = self._get_matriz_paper()
+        return matrix
+
+    def _get_matriz_paper(self) -> array:
+        k = 10**3
+        ncond = log10(k)
+        n = 10
+        a = array([10**(ncond*(n-j)/(n-1))
+                   for j in range(1, n+1)])
+        matrix = zeros((n, n))
+        fill_diagonal(matrix, a)
+        return matrix
