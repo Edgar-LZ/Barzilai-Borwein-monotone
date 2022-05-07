@@ -3,7 +3,7 @@ from .functions import functions_class
 from .line_search import get_alpha
 from numpy.linalg import norm
 from pandas import DataFrame
-from numpy import array
+from numpy import array, dot
 
 
 class algorithm_class:
@@ -281,4 +281,72 @@ class algorithm_class:
             iteration += 1
 
     def angr2(self) -> float:
-        pass
+        """
+        Metodo del descenso del gradiente con paso de barzilai
+        """
+        # Inicializacion del vector de resultado
+        function = self.function.f
+        gradient = self.function.gradient
+        hessian = self.function.hessian
+        tau_1 = self.params["tau 1"]
+        tau_2 = self.params["tau 2"]
+        x_k = self.params["x"].copy()
+        iteration = 1
+        gradient_k = gradient(x_k, self.params)
+        hessian_k = hessian(x_k, self.params)
+        # Inicializacion de variables
+        q_k = array([])
+        q_j = array([])
+        alpha_mg = self.get_alpha._get_alpha_mg(gradient_k,
+                                                hessian_k)
+        alpha_k_bb2 = None
+        alpha_k = None
+        alpha_j = None
+        alpha_k_true = None
+        while(True):
+            alpha_j_true = alpha_k_true
+            alpha_k_true = self.params["alpha"]
+            if iteration >= 2:
+                q_j = q_k.copy()
+                q_k = self.get_alpha._get_q(gradient_k,
+                                            gradient_j)
+                s_k = x_k-x_j
+                y_k = gradient_k-gradient_j
+                alpha_k_bb1 = self.get_alpha._get_alpha_bb1(s_k,
+                                                            y_k)
+                alpha_j_bb2 = alpha_k_bb2
+                alpha_k_bb2 = self.get_alpha._get_alpha_bb2(s_k,
+                                                            y_k)
+                alpha_i = alpha_j
+                alpha_j = alpha_k
+                diff = q_k-gradient_j
+                alpha_k = alpha_j_true*dot(q_k, diff)
+                alpha_k = alpha_k / dot(diff, diff)
+                alpha = alpha_k_bb1
+            if iteration >= 4:
+                decision_1 = alpha_k_bb2 < tau_1*alpha_k_bb1
+                decision_2 = norm(gradient_j) < tau_2*norm(gradient_k)
+                if decision_1 and decision_2:
+                    alpha_k_true = min(alpha_k_bb2, alpha_j_bb2)
+                elif decision_1 and not decision_2:
+                    alpha_k_true = min(alpha_k_bb2, alpha_i)
+                else:
+                    alpha_k_true = alpha_k_bb1
+            x_j = x_k.copy()
+            x_k = x_k-alpha_k_true*gradient_k
+            gradient_j = gradient_k.copy()
+            gradient_k = gradient(x_k, self.params)
+            hessian_k = hessian(x_k, self.params)
+            self.params["x"] = x_k
+            self.save_results(iteration,
+                              function(self.params),
+                              gradient_k,
+                              alpha)
+            if self.stop_functions.gradient(gradient,
+                                            x_k,
+                                            self.params):
+                break
+            if self.stop_functions.iterations(iteration,
+                                              self.params):
+                break
+            iteration += 1
