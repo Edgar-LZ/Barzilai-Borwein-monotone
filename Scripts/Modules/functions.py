@@ -90,7 +90,7 @@ class functions_class:
         g[-1] = 200*(x[-1]-x[-2]**2)
         return g
 
-    def hessian_rosembrock(x: array, params: dict) -> array:
+    def hessian_rosembrock(self, x: array, params: dict) -> array:
         """ 
         Hessiano de rosembrock
         """

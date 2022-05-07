@@ -17,15 +17,15 @@ class get_alpha():
         if params["search name"] == "barzilai":
             self.method = self.barzilai_stabilized
         if params["search name"] == "ANGM":
-            self.method = self.angm
+            pass
         if params["search name"] == "ANGR1":
-            self.method = self.angr1
+            pass
         if params["search name"] == "ANGR2":
-            self.method = self.angr2
+            pass
 
     def fixed(self, function: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
         # Inicialización
-        alpha = 0.001
+        alpha = 0.01
         return alpha
 
     def bisection(self, function: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
@@ -132,15 +132,11 @@ class get_alpha():
         alpha para minimal gradient
         Ecuacion 24a
         """
-        # up = g_k @ h_k
-        # down = dot(up, up)
-        # up = dot(up, g_k)
-        # alpha = up/down
         alpha = (g_k@h_k@g_k)
         alpha = alpha / (g_k@h_k@h_k@g_k)
         return alpha
 
-    def _get_q(self, g_j: array, g_k: array) -> array:
+    def _get_q(self, g_k: array, g_j: array) -> array:
         """
         Retorna la aproximación a q como se define en el paper
         """
@@ -200,55 +196,3 @@ class get_alpha():
         den = alpha_k_prev + alpha_mg + sqrt(raiz)
         alpha = 2/den
         return alpha
-
-    def angm(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
-        tau1 = params["tau 1"]
-        tau2 = params["tau 2"]
-        x_list, gradient_list, hessian_list, alpha_list = information
-        # Posicion k-2, k-1 y k
-        x_i, x_j, x_k = x_list
-        # Gradiente k-2, k-1 y k
-        gradient_i, gradient_j, gradient_k = gradient_list
-        # Hessiano k-2, k-1 y k
-        hessian_i, hessian_j, hessian_k = hessian_list
-        # Alpha k-2, k-1 y k
-        alpha_i, alpha_j, alpha_k = alpha_list
-        s_k1 = x_j-x_i
-        s_k2 = x_k-x_j
-        y_k1 = gradient_j-gradient_i
-        y_k2 = gradient_k-gradient_j
-        # |g_{k-1}|
-        gk1 = norm(gradient_j)
-        # |g_k|
-        gk2 = norm(gradient_k)
-        # Alpha BB1 k
-        alpha_bb1_k2 = self._get_alpha_bb1(s_k2, y_k2)
-        # Alpha BB2 k-1
-        alpha_bb2_k1 = self._get_alpha_bb2(s_k1, y_k1)
-        # Alpha BB2 k
-        alpha_bb2_k2 = self._get_alpha_bb2(s_k2, y_k2)
-        if alpha_bb2_k2 < tau1*alpha_bb1_k2 and gk1 < tau2*gk2:
-            alpha = min((alpha_bb2_k2, alpha_bb2_k1))
-        elif alpha_bb2_k2 < tau1*alpha_bb1_k2 and gk1 >= tau2*gk2:
-            q_j = self._get_q(gradient_j, gradient_i)
-            alpha_mg = self._get_alpha_mg(gradient_k, hessian_k)
-            alpha = self._get_alpha_bb2_paper(q_j,
-                                              hessian_k,
-                                              gradient_k,
-                                              alpha_j,
-                                              alpha_mg)
-        else:
-            alpha = alpha_bb1_k2
-        return alpha
-
-    def angr1(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
-        x_list, gradient_list, hessian_list = information
-        x_i, x_j = x_list
-        gradient_i, gradient_j = gradient_list
-        hessian_i, hessian_j = hessian_list
-
-    def angr2(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
-        x_list, gradient_list, hessian_list = information
-        x_i, x_j = x_list
-        gradient_i, gradient_j = gradient_list
-        hessian_i, hessian_j = hessian_list

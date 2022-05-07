@@ -143,69 +143,63 @@ class algorithm_class:
         function = self.function.f
         gradient = self.function.gradient
         hessian = self.function.hessian
-        iteration = 1
-        x_l = self.params["x"].copy()
+        tau_1 = self.params["tau 1"]
+        tau_2 = self.params["tau 2"]
         x_k = self.params["x"].copy()
-        x_j = self.params["x"].copy()
-        x_i = self.params["x"].copy()
-        gradient_l = gradient(x_k, self.params)
-        gradient_k = gradient_l.copy()
-        gradient_j = gradient_l.copy()
-        gradient_i = gradient_l.copy()
-        hessian_l = hessian(x_l, self.params)
-        hessian_k = hessian_l.copy()
-        hessian_j = hessian_k.copy()
-        hessian_i = hessian_k.copy()
-        alpha_l = 0.1
-        alpha_k = 0.1
-        alpha_j = 0.1
-        alpha_i = 0.1
+        iteration = 1
+        gradient_k = gradient(x_k, self.params)
+        hessian_k = hessian(x_k, self.params)
+        # Inicializacion de variables
+        q_k = array([])
+        alpha_mg = self.get_alpha._get_alpha_mg(gradient_k,
+                                                hessian_k)
+        alpha_k_bb2 = None
+        alpha_k = None
         while(True):
-            alpha_k = alpha_l
+            alpha = self.params["alpha"]
+            if iteration >= 2:
+                q_j = q_k.copy()
+                q_k = self.get_alpha._get_q(gradient_k,
+                                            gradient_j)
+                s_k = x_k-x_j
+                y_k = gradient_k-gradient_j
+                alpha_k_bb1 = self.get_alpha._get_alpha_bb1(s_k,
+                                                            y_k)
+                alpha_j_bb2 = alpha_k_bb2
+                alpha_k_bb2 = self.get_alpha._get_alpha_bb2(s_k,
+                                                            y_k)
+                alpha_j = alpha_k
+                alpha_k = self.get_alpha._get_alpha_k(q_k,
+                                                      hessian_k)
+                alpha = alpha_k_bb1
+            if iteration >= 3:
+                alpha_bb2_paper = self.get_alpha._get_alpha_bb2_paper(q_j,
+                                                                      hessian_k,
+                                                                      gradient_k,
+                                                                      alpha_j,
+                                                                      alpha_mg)
+                decision_1 = alpha_k_bb2 < tau_1*alpha_k_bb1
+                decision_2 = norm(gradient_j) < tau_2*norm(gradient_k)
+                if decision_1 and decision_2:
+                    alpha = min(alpha_k_bb2, alpha_j_bb2)
+                elif decision_1 and not decision_2:
+                    alpha = alpha_bb2_paper
+                else:
+                    alpha = alpha_k_bb1
             x_j = x_k.copy()
-            x_k = x_l.copy()
-            if iteration == 1:
-                self.select_get_alpha_method("bisection")
-            if iteration == 2:
-                self.select_get_alpha_method("barzilai")
-                alpha_j = alpha_k
-                gradient_j = gradient_k.copy()
-            if iteration > 2:
-                self.select_get_alpha_method(self.params["search name"])
-                x_i = x_j.copy()
-                alpha_i = alpha_j
-                alpha_j = alpha_k
-                gradient_i = gradient_j.copy()
-                gradient_j = gradient_k.copy()
-            # Calculo del gradiente en el paso i
-            # Guardado del paso anterior
-            # x_j = x_k.copy()
-            gradient_k = gradient_l.copy()
-            gradient_d = -gradient(x_k, self.params)
-            # Siguiente paso
-            # print(gradient_i, gradient_j, gradient_k)
-            information = [[x_i, x_j, x_k],
-                           [gradient_i, gradient_j, gradient_k],
-                           [hessian_i, hessian_j, hessian_k],
-                           [alpha_i, alpha_j, alpha_k]]
-            alpha = self.get_alpha.method(function,
-                                          gradient,
-                                          information,
-                                          self.params,
-                                          gradient_d)
-            x_l = x_k + alpha * gradient_d
-            alpha_l = alpha_k
-            gradient_l = gradient(x_l, self.params)
-            # hessian_j = hessian_k.copy()
-            # gradient_k = gradient(x_k, self.params)
-            # hessian_k = hessian(x_k, self.params)
-            self.params["x"] = x_l
+            x_k = x_k-alpha*gradient_k
+            gradient_j = gradient_k.copy()
+            gradient_k = gradient(x_k, self.params)
+            hessian_k = hessian(x_k, self.params)
+            alpha_mg = self.get_alpha._get_alpha_mg(gradient_k,
+                                                    hessian_k)
+            self.params["x"] = x_k
             self.save_results(iteration,
                               function(self.params),
-                              gradient(x_l, self.params),
+                              gradient_k,
                               alpha)
             if self.stop_functions.gradient(gradient,
-                                            x_l,
+                                            x_k,
                                             self.params):
                 break
             if self.stop_functions.iterations(iteration,
