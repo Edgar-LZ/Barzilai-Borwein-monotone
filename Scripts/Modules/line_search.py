@@ -1,5 +1,5 @@
-from numpy import array, dot, inf
-from numpy.linalg import norm
+from numpy import array, dot, eye, inf, sqrt
+from numpy.linalg import norm, solve
 from typing import Callable
 
 
@@ -10,6 +10,8 @@ class get_alpha():
 
     def __init__(self, params: dict) -> None:
         self.params = params
+        if params["search name"] == "fixed":
+            self.method = self.fixed
         if params["search name"] == "bisection":
             self.method = self.bisection
         if params["search name"] == "barzilai":
@@ -21,27 +23,32 @@ class get_alpha():
         if params["search name"] == "ANGR2":
             self.method = self.angr2
 
+    def fixed(self, function: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
+        # Inicialización
+        alpha = 0.001
+        return alpha
+
     def bisection(self, function: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
         # Inicialización
-        x, gradient_i, hessian = information
-        x_i, x = x
+        x_list, gradient_i, hessian, alpha_list = information
+        x_i, x_j, x_k = x_list
         alpha = 0.0
         beta_i = inf
         alpha_k = 1
-        dot_grad = gradient(x, params) @ d
+        dot_grad = gradient(x_k, params) @ d
         while True:
-            armijo_condition = self.obtain_armijo_condition(function,
-                                                            dot_grad,
-                                                            x,
-                                                            params,
-                                                            d,
-                                                            alpha_k)
-            wolfe_condition = self.obtain_wolfe_condition(gradient,
-                                                          x,
-                                                          params,
-                                                          dot_grad,
-                                                          d,
-                                                          alpha_k)
+            armijo_condition = self._armijo_condition(function,
+                                                      dot_grad,
+                                                      x_k,
+                                                      params,
+                                                      d,
+                                                      alpha_k)
+            wolfe_condition = self._wolfe_condition(gradient,
+                                                    x_k,
+                                                    params,
+                                                    dot_grad,
+                                                    d,
+                                                    alpha_k)
             if armijo_condition or wolfe_condition:
                 if armijo_condition:
                     beta_i = alpha_k
@@ -56,7 +63,7 @@ class get_alpha():
                 break
         return alpha_k
 
-    def obtain_armijo_condition(self, function: Callable, dot_grad: float, x: array, params: dict, d: array, alpha: float):
+    def _armijo_condition(self, function: Callable, dot_grad: float, x: array, params: dict, d: array, alpha: float):
         """
         Condicion de armijo
         """
@@ -65,40 +72,174 @@ class get_alpha():
         params_copy["x"] = params_copy["x"]+alpha*d
         fx_alpha = function(params_copy)
         fx_alphagrad += self.params["c1"]*alpha*dot_grad
-        armijo_condition = fx_alpha > fx_alphagrad
-        return armijo_condition
+        armijo = fx_alpha > fx_alphagrad
+        return armijo
 
-    def obtain_wolfe_condition(self, gradient: Callable,  x: array, params: dict, dot_grad: float, d: array, alpha: float):
+    def _wolfe_condition(self, gradient: Callable,  x: array, params: dict, dot_grad: float, d: array, alpha: float):
         """
         Condicion de Wolfe
         """
         dfx_alpha = gradient(x+alpha*d, params)
         dfx_alpha = dfx_alpha @ d
-        wolfe_condition = dfx_alpha < self.params["c2"]*dot_grad
-        return wolfe_condition
+        wolfe = dfx_alpha < self.params["c2"]*dot_grad
+        return wolfe
 
     def barzilai_stabilized(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
-        x_list, gradient_list, hessian_list = information
-        x_i, x_j = x_list
-        gradient_i, gradient_j = gradient_list
+        x_list, gradient_list, hessian_list, alpha_list = information
+        x, x_i, x_j = x_list
+        x, gradient_i, gradient_j = gradient_list
         s_k = x_j-x_i
         # delta = norm(s_k)/norm(gradient_j)
         delta = 0.1
         y_k = gradient_j-gradient_i
         if params["BB type"] == 1:
-            up = dot(s_k, s_k)
-            down = dot(s_k, y_k)
+            alpha_i = self._get_alpha_bb1(s_k,
+                                          y_k)
         if params["BB type"] == 2:
-            up = dot(s_k, y_k)
-            down = dot(y_k, y_k)
-        alpha = min((up/down, delta))
+            alpha_i = self._get_alpha_bb2(s_k,
+                                          y_k)
+        alpha = min((alpha_i, delta))
+        return alpha
+
+    def _get_alpha_bb1(self, s_k: array, y_k: array) -> float:
+        """
+        Ecuacion 5a
+        """
+        up = dot(s_k, s_k)
+        down = dot(s_k, y_k)
+        alpha = up/down
+        return alpha
+
+    def _get_alpha_bb2(self, s_k: array, y_k: array) -> float:
+        """
+        Ecuacion 5b
+        """
+        up = dot(s_k, y_k)
+        down = dot(y_k, y_k)
+        alpha = up/down
+        return alpha
+
+    def _get_alpha_sd(self, g_k: array, h_k: array) -> float:
+        """
+        alpha para el descenso de gradiente estandar
+        Pagina 2a
+        """
+        alpha = dot(g_k, g_k) / (g_k@h_k@g_k)
+        return alpha
+
+    def _get_alpha_mg(self, g_k: array, h_k: array) -> float:
+        """
+        alpha para minimal gradient
+        Ecuacion 24a
+        """
+        # up = g_k @ h_k
+        # down = dot(up, up)
+        # up = dot(up, g_k)
+        # alpha = up/down
+        alpha = (g_k@h_k@g_k)
+        alpha = alpha / (g_k@h_k@h_k@g_k)
+        return alpha
+
+    def _get_q(self, g_j: array, g_k: array) -> array:
+        """
+        Retorna la aproximación a q como se define en el paper
+        """
+        # qk = solve(eye(g_j.shape[0])-alpha_j*h_k, g_j)
+        zeros = g_k == 0
+        g_k[zeros] = 1
+        qk = g_j**2 / g_k
+        qk[zeros] = 0
+        return qk
+
+    def _get_alpha_k(self, qk, H_k):
+        """
+        alpha gorrito para la obtencion de BB2
+        Ecuacion 24a
+        """
+        return self._get_alpha_mg(qk, H_k)
+
+    def _get_gamma_k(self, q_j: array, g_k: array, H_k: array) -> float:
+        """
+        gamma usado para calcular BB2
+        ecuacion 25b
+        """
+        # up_left = dot(q_j, H_k)
+        # up_right = dot(H_k, g_k)
+        # up = dot(up_left, up_right)
+        # gamma = 4 * (up)**2
+        # down_left = dot(up_left, q_j)
+        # down_right = dot(g_k, up_right)
+        # gamma = gamma / (down_left * down_right)
+        gamma = 4 * (q_j@H_k@H_k@g_k)**2
+        gamma = gamma / (q_j@H_k@q_j * g_k@H_k@g_k)
+        return gamma
+
+    def _get_alpha_bb1_paper(self, q_j: array, g_k: array, H_k: array) -> float:
+        """
+        Retorna el nuevo cálculo para BB1 propuesto
+        """
+        alpha_sd = 1/self._get_alpha_sd(g_k, H_k)
+        qAq = q_j@H_k@q_j
+        qk_norm = dot(q_j, q_j)
+        gk_norm = dot(g_k, g_k)
+        qAg = q_j@H_k@g_k
+        raiz = (qAq/qk_norm - alpha_sd)**2 + 4*qAg / (qk_norm * gk_norm)
+        den = qAq/qk_norm + alpha_sd + sqrt(raiz)
+        alpha = 2/den
+        return alpha
+
+    def _get_alpha_bb2_paper(self, q_j: array, h_k: array, g_k: array, alpha_k_prev: array, alpha_mg: array) -> float:
+        """
+        alpha para la aproximacion de BB2
+        Ecuacion 24
+        """
+        alpha_mg = 1 / alpha_mg
+        alpha_k_prev = 1 / alpha_k_prev
+        gamma_k = self._get_gamma_k(q_j, g_k, h_k)
+        raiz = (alpha_k_prev - alpha_mg)**2 + gamma_k
+        den = alpha_k_prev + alpha_mg + sqrt(raiz)
+        alpha = 2/den
         return alpha
 
     def angm(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
-        x_list, gradient_list, hessian_list = information
-        x_i, x_j = x_list
-        gradient_i, gradient_j = gradient_list
-        hessian_i, hessian_j = hessian_list
+        tau1 = params["tau 1"]
+        tau2 = params["tau 2"]
+        x_list, gradient_list, hessian_list, alpha_list = information
+        # Posicion k-2, k-1 y k
+        x_i, x_j, x_k = x_list
+        # Gradiente k-2, k-1 y k
+        gradient_i, gradient_j, gradient_k = gradient_list
+        # Hessiano k-2, k-1 y k
+        hessian_i, hessian_j, hessian_k = hessian_list
+        # Alpha k-2, k-1 y k
+        alpha_i, alpha_j, alpha_k = alpha_list
+        s_k1 = x_j-x_i
+        s_k2 = x_k-x_j
+        y_k1 = gradient_j-gradient_i
+        y_k2 = gradient_k-gradient_j
+        # |g_{k-1}|
+        gk1 = norm(gradient_j)
+        # |g_k|
+        gk2 = norm(gradient_k)
+        # Alpha BB1 k
+        alpha_bb1_k2 = self._get_alpha_bb1(s_k2, y_k2)
+        # Alpha BB2 k-1
+        alpha_bb2_k1 = self._get_alpha_bb2(s_k1, y_k1)
+        # Alpha BB2 k
+        alpha_bb2_k2 = self._get_alpha_bb2(s_k2, y_k2)
+        if alpha_bb2_k2 < tau1*alpha_bb1_k2 and gk1 < tau2*gk2:
+            alpha = min((alpha_bb2_k2, alpha_bb2_k1))
+        elif alpha_bb2_k2 < tau1*alpha_bb1_k2 and gk1 >= tau2*gk2:
+            q_j = self._get_q(gradient_j, gradient_i)
+            alpha_mg = self._get_alpha_mg(gradient_k, hessian_k)
+            alpha = self._get_alpha_bb2_paper(q_j,
+                                              hessian_k,
+                                              gradient_k,
+                                              alpha_j,
+                                              alpha_mg)
+        else:
+            alpha = alpha_bb1_k2
+        return alpha
 
     def angr1(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
         x_list, gradient_list, hessian_list = information
