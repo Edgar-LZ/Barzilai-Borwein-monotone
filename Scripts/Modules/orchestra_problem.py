@@ -1,8 +1,7 @@
 from .methods import algorithm_class
 from os import makedirs as mkdir
-from numpy.random import normal
-from os.path import join
 from numpy import array, ones
+from os.path import join
 
 
 class orchestra_problem:
@@ -23,7 +22,6 @@ class orchestra_problem:
         if name == "wood":
             self.params["x"] = array([-3, -1, -3, -1])
         if name == "rosembrock":
-            # self.params["x"] = normal(1, 10, (2))
             self.params["x"] = ones(100)
             self.params["x"][0] = -1.2
             self.params["x"][-2] = -1.2
