@@ -2,9 +2,9 @@ def get_params() -> dict:
     params = {
         "path graphics": "Graphics",
         "path results": "Results",
-        "function name": "quadratic",
+        "function name": "paper",
         "method": "ANGR2",
-        "max iterations": 1e5,
+        "max iterations": 1e4,
         "c1": 1e-4,
         "c2": 0.9,
         "tau": 1e-6,

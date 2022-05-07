@@ -27,7 +27,7 @@ class orchestra_problem:
             self.params["x"][0] = -1.2
             self.params["x"][-2] = -1.2
         if name == "paper":
-            self.params["x"] = array([10 for i in range(10)])
+            self.params["x"] = normal(0, 10, (10))
         if name == "quadratic":
             self.params["x"] = normal(0, 10, (2))
 
