@@ -208,7 +208,77 @@ class algorithm_class:
             iteration += 1
 
     def angr1(self) -> float:
-        pass
+        """
+        Metodo del descenso del gradiente con paso de barzilai
+        """
+        # Inicializacion del vector de resultado
+        function = self.function.f
+        gradient = self.function.gradient
+        hessian = self.function.hessian
+        tau_1 = self.params["tau 1"]
+        tau_2 = self.params["tau 2"]
+        x_k = self.params["x"].copy()
+        iteration = 1
+        gradient_k = gradient(x_k, self.params)
+        hessian_k = hessian(x_k, self.params)
+        # Inicializacion de variables
+        q_k = array([])
+        q_j = array([])
+        alpha_k_bb2 = None
+        alpha_k = None
+        alpha_j = None
+        while(True):
+            alpha = self.params["alpha"]
+            if iteration >= 2:
+                q_i = q_j.copy()
+                q_j = q_k.copy()
+                q_k = self.get_alpha._get_q(gradient_k,
+                                            gradient_j)
+                s_k = x_k-x_j
+                y_k = gradient_k-gradient_j
+                alpha_k_bb1 = self.get_alpha._get_alpha_bb1(s_k,
+                                                            y_k)
+                alpha_j_bb2 = alpha_k_bb2
+                alpha_k_bb2 = self.get_alpha._get_alpha_bb2(s_k,
+                                                            y_k)
+                alpha_i = alpha_j
+                alpha_j = alpha_k
+                alpha_k = self.get_alpha._get_alpha_k(q_k,
+                                                      hessian_k)
+                alpha = alpha_k_bb1
+            if iteration >= 4:
+                alpha_bb2_paper = self.get_alpha._get_alpha_bb2_paper(q_i,
+                                                                      hessian_j,
+                                                                      gradient_j,
+                                                                      alpha_i,
+                                                                      alpha_k_bb2)
+                decision_1 = alpha_k_bb2 < tau_1*alpha_k_bb1
+                decision_2 = norm(gradient_j) < tau_2*norm(gradient_k)
+                if decision_1 and decision_2:
+                    alpha = min(alpha_k_bb2, alpha_j_bb2)
+                elif decision_1 and not decision_2:
+                    alpha = alpha_bb2_paper
+                else:
+                    alpha = alpha_k_bb1
+            x_j = x_k.copy()
+            x_k = x_k-alpha*gradient_k
+            gradient_j = gradient_k.copy()
+            gradient_k = gradient(x_k, self.params)
+            hessian_j = hessian_k.copy()
+            hessian_k = hessian(x_k, self.params)
+            self.params["x"] = x_k
+            self.save_results(iteration,
+                              function(self.params),
+                              gradient_k,
+                              alpha)
+            if self.stop_functions.gradient(gradient,
+                                            x_k,
+                                            self.params):
+                break
+            if self.stop_functions.iterations(iteration,
+                                              self.params):
+                break
+            iteration += 1
 
     def angr2(self) -> float:
         pass

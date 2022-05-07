@@ -3,11 +3,11 @@ def get_params() -> dict:
         "path graphics": "Graphics",
         "path results": "Results",
         "function name": "rosembrock",
-        "method": "ANGM",
+        "method": "ANGR1",
         "max iterations": 1e5,
         "c1": 1e-4,
         "c2": 0.9,
-        "alpha": 0.001,
+        "alpha": 0.1,
         "tau": 1e-6,
     }
     params = _define_search_methods(params)
@@ -26,6 +26,11 @@ def _define_search_methods(params) -> dict:
                  "tau 1": 0.85,
                  "tau 2": 1.3,
                  "BB type": 1, },
+        "ANGR1": {"search algorithm": "ANGR1",
+                  "search name": "ANRG1",
+                  "tau 1": 0.85,
+                  "tau 2": 1.3,
+                  "BB type": 1, },
     }
     params.update(methods[params["method"]])
     return params
