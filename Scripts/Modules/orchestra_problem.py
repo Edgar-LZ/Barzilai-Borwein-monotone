@@ -21,11 +21,13 @@ class orchestra_problem:
     def initial_points(self) -> None:
         name = self.params["function name"]
         if name == "wood":
-            self.params["x"] = array([-3, -1, -3, -1])
+            # self.params["x"] = array([-3, -1, -3, -1])
+            self.params["x"] = normal(1, 10, (4))
         if name == "rosembrock":
-            self.params["x"] = ones(100)
-            self.params["x"][0] = -1.2
-            self.params["x"][-2] = -1.2
+            self.params["x"] = normal(1, 10, (2))
+            # self.params["x"] = ones(100)
+            # self.params["x"][0] = -1.2
+            # self.params["x"][-2] = -1.2
         if name == "paper":
             self.params["x"] = normal(0, 10, (10))
         if name == "quadratic":

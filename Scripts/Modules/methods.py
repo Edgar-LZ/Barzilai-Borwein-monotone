@@ -1,9 +1,11 @@
 from .stop_criteria import stop_functions
 from .functions import functions_class
+from numpy import array, dot, sqrt
 from .line_search import get_alpha
 from numpy.linalg import norm
 from pandas import DataFrame
-from numpy import array, dot
+from cmath import isnan
+from sys import exit
 
 
 class algorithm_class:
@@ -43,12 +45,15 @@ class algorithm_class:
         self.results.loc[iteration] = [function,
                                        norm_gradient,
                                        alpha]
-        text = "Iteration: {:>5} "
-        text += "Function: {:>25} "
-        text += "Gradient {:>15}"
-        print(text.format(iteration,
-                          function,
-                          norm_gradient))
+        # text = "Iteration: {:>5} "
+        # text += "Function: {:>25} "
+        # text += "Gradient {:>15}"
+        # print(text.format(iteration,
+        #                   function,
+        #                   norm_gradient))
+        if isnan(function):
+            text = "nan value"
+            exit(text)
 
     def descent_gradient(self):
         """
@@ -113,7 +118,7 @@ class algorithm_class:
                     alpha = self.get_alpha._get_alpha_bb1(s_k, y_k)
                 if self.params["BB type"] == 2:
                     alpha = self.get_alpha._get_alpha_bb2(s_k, y_k)
-                alpha = min((alpha, 0.01))
+                alpha = min((alpha, 0.1))
             # Guardado del paso anterior
             x_j = x_k.copy()
             # Siguiente paso
@@ -341,7 +346,7 @@ class algorithm_class:
             self.save_results(iteration,
                               function(self.params),
                               gradient_k,
-                              alpha)
+                              alpha_k)
             if self.stop_functions.gradient(gradient,
                                             x_k,
                                             self.params):
