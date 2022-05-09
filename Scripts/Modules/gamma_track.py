@@ -130,6 +130,9 @@ class optimize_method_gamma_track:
             # Siguiente paso
             x_k = x_k - alpha * gradient_k
             gradient_j = gradient_k.copy()
+            gamma, max_index = obtain_gamma(gradient_j)
+            gamma_list += [gamma]
+            max_index_list += [max_index[0]]
             # Calculo del gradiente en el paso i
             gradient_k = gradient(x_k, self.params)
             self.params["x"] = x_k

@@ -146,3 +146,24 @@ def _define_function_params(params) -> dict:
     }
     params.update(f_params[params["function name"]][params["method"]])
     return params
+
+
+def get_graphics_params(params: dict) -> dict:
+    datasets = {"ANGR1": {"x lim": [0, 275],
+                          "x delta": 25,
+                          },
+                "ANGR2": {"x lim": [0, 275],
+                          "x delta": 25,
+                          },
+                "ANGM": {"x lim": [0, 275],
+                         "x delta": 20,
+                         },
+                "steepest": {"x lim": [0, 1800],
+                             "x delta": 200,
+                             },
+                "barzilai": {"x lim": [0, 850],
+                             "x delta": 100,
+                             },
+                }
+    params.update(datasets[params["method"]])
+    return params
