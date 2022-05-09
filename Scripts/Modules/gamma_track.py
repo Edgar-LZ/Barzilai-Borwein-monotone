@@ -24,7 +24,6 @@ class optimize_method_gamma_track:
     """
 
     def __init__(self, params: dict) -> None:
-        self.folder_results = "gamma"
         # Parametros de las funciones y elecciones
         self.params = params
         # Creacion del dataframe de los resultados
@@ -56,7 +55,7 @@ class optimize_method_gamma_track:
     def save_results(self) -> None:
         filename = "{}.csv".format(self.params["search algorithm"])
         folder = join(self.params["path results"],
-                      self.folder_results)
+                      self.params["gamma folder"])
         makedirs(folder,
                  exist_ok=True)
         filename = join(folder,

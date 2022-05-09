@@ -7,8 +7,7 @@ from numpy import array
 
 params = get_params()
 params["function name"] = "paper"
-params["method"] = "barzilai"
-params["method"] = "ANGR2"
+params["method"] = "steepest"
 params["tau"] = 1e-6
 params = _define_function_params(params)
 function = functions_class(params)
