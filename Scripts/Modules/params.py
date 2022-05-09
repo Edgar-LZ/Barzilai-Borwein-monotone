@@ -1,9 +1,10 @@
 def get_params() -> dict:
     params = {
         "path graphics": "Graphics",
+        "path results": "Results",
         "gamma folder": "gamma",
         "position folder": "position",
-        "path results": "Results",
+        "animation folder": "movie",
         "function name": "rosembrock",
         "method": "steepest",
         "max iterations": 1e4,
