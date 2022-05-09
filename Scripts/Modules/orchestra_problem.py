@@ -1,7 +1,6 @@
-from .methods import algorithm_class
+from .optimize import optimize_method
 from os import makedirs as mkdir
 from numpy.random import normal
-from numpy import array, ones
 from os.path import join
 
 
@@ -15,7 +14,7 @@ class orchestra_problem:
 
     def init(self, params: dict) -> None:
         self.params = params
-        self.algorithm = algorithm_class(params)
+        self.algorithm = optimize_method(params)
         self.initial_points()
 
     def initial_points(self) -> None:

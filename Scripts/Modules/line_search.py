@@ -15,7 +15,7 @@ class get_alpha():
         if params["search name"] == "bisection":
             self.method = self.bisection
         if params["search name"] == "barzilai":
-            self.method = self.barzilai_stabilized
+            self.method = self.barzilai
         if params["search name"] == "ANGM":
             pass
         if params["search name"] == "ANGR1":
@@ -28,10 +28,8 @@ class get_alpha():
         alpha = 0.01
         return alpha
 
-    def bisection(self, function: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
+    def bisection(self, function: Callable, gradient: Callable, x_k: array, params: dict, d: array) -> float:
         # Inicialización
-        x_list, gradient_i, hessian, alpha_list = information
-        x_i, x_j, x_k = x_list
         alpha = 0.0
         beta_i = inf
         alpha_k = 1
@@ -84,7 +82,7 @@ class get_alpha():
         wolfe = dfx_alpha < self.params["c2"]*dot_grad
         return wolfe
 
-    def barzilai_stabilized(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
+    def barzilai(self, function_f: Callable, gradient: Callable, information: array, params: dict, d: array) -> float:
         x_list, gradient_list, hessian_list, alpha_list = information
         x, x_i, x_j = x_list
         x, gradient_i, gradient_j = gradient_list
