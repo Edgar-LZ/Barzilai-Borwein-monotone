@@ -99,3 +99,82 @@ $$
 \tilde{\alpha}_{k_0} = \frac{2}{\left(H^{(11)}_{k_0} + H^{(22)}_{k_0}\right)+\sqrt{\left(H^{(11)}_{k_0} - H^{(22)}_{k_0}\right)^2 } + 4\left(H_{k_0}^{(12)}\right)^2}
 $$
 en la iteración $k_0$-ésima donde $k_0\geq 2$. Entonces, el método encontrará el minimizador en máximo $k_0+3$ iteraciones.
+
+\it Prueba \normalfont Supongamos que $x_k$ no es un minimizador para toda $k=1, ..., k_0+1$. Para simplificar durante la prueba, se utilizará comom notación $k$ para referirse a $k_0$.
+\par Es necesario observar que $\tilde{\alpha_k}$ satisface la siguiente ecuación cuadrática
+$$
+	\tilde{\alpha}^2_k\Delta-\tilde{\alpha}_k\left(H^(11)_k + H_k^(22)\right) + 1 = 0
+$$
+en donde $\Delta = \det{(H_k)}$ = $\det{(A)}\>0$. Ahora, sea
+$$
+\Theta = \left(H_k^{(12)}\vartheta_k^{(1)}+ H_k^{(22)}\vartheta^{(2)}_k\right)\vartheta_k^{(1)} -  \left(H_k^{(11)}\vartheta_k^{(1)}+ H_k^{(12)}\vartheta^{(2)}_k\right)\vartheta_k^{(2)} 
+$$
+en donde $\vartheta_k^{(i)}$ son las componentes de $\vartheta_k$. Multiplicando $\Theta$ a la ecuación cuadrática para $\alpha$ se tiene lo siguiente
+$$
+\tilde{\alpha}_k^2\Delta\Theta-\tilde{\alpha_k}\left(H_k^{(11)}+H_k^{(12)}\right)\Theta + \Theta = 0,
+$$
+que exactamente es
+\begin{align*}
+	(H_k^{(22)}v_k^{1}-H_k^{(12)}v_k^{(2)}-\tilde{\alpha}_k\Delta\vartheta_k^{(1)})[\vartheta_k ^{(2)}-\tilde{\alpha}_k(H_k^{(12)}\vartheta_k^{(1)}+H_k^{(22)}\vartheta_k^{(2)})]\\
+	= (H_k^{(11)}v_k^{2}-H_k^{(12)}v_k^{(1)}-\tilde{\alpha}_k\Delta\vartheta_k^{(1)})[\vartheta_k ^{(1)}-\tilde{\alpha}_k(H_k^{(11)}\vartheta_k^{(1)}+H_k^{(12)}\vartheta_k^{(2)})].
+\end{align*}
+Como paréntesis consideremos dos vectores $\boldsymbol{A} = (a_1, a_2)^T$ y $\boldsymbol{B} = (b_1, b_2)^T$, y supongamos que se cumple que $a_1b_2 = a_2b_1$, sustituyendo $b_2$ en $\boldsymbol{B}$, tenemos lo siguiente
+$$
+	\boldsymbol{B} = \begin{pmatrix}b_1\\\frac{b_1a_2}{a_1}\end{pmatrix} = \frac{b_1}{a_1}\boldsymbol{A}
+$$
+por los que podemos decir que $\boldsymbol{B}$ es paralelo a $\boldsymbol{A}$.
+\par Haciendo uso del resultado anterior podemos decir que el vector 
+$$
+\begin{pmatrix}
+	H_k^{(22)}\vartheta_k^{(1)}-H_k^{(12)}\vartheta_k^{(2)}-\tilde{\alpha}_k\Delta\vartheta_k^{(1)}\\
+	H_k^{(11)}\vartheta_k^{(2)}-H_k^{(12)}\vartheta_k^{(1)}-\tilde{\alpha}_k\Delta\vartheta_k^{(2)}
+\end{pmatrix}
+$$
+es paralelo a 
+$$
+	\begin{pmatrix}
+		v_k^{(1)} - \tilde{\alpha}_k(H_k^{(11)}\vartheta_k^{(1)}+H_k^{(12)}\vartheta_k^{(2)})\\
+		v_k^{(2)} - \tilde{\alpha}_k(H_k^{(12)}\vartheta_k^{(1)}+H_k^{(22)}\vartheta_k^{(2)})
+	\end{pmatrix}
+$$
+que escrito de otra forma significa que 
+$$
+\vartheta_k+H_k(-\tilde{\alpha}_k\vartheta_k) \text{ es paralelo a } H_k^{-1}\vartheta_j-\tilde{\alpha}_k\vartheta_k
+$$
+es decir
+$$
+\vartheta_k+H_k(-\tilde{\alpha}_k\vartheta_k) = \gamma(H_k^{-1}\vartheta_j-\tilde{\alpha}_k\vartheta_k)
+$$
+en donde $\gamma$ es una constante diferente de cero. Ahora, si multiplicamos a ambos lados de la ecuación por $B_k^T$ por la derecha se tiene
+$$
+B_k^T[\vartheta_k+H_k(-\tilde{\alpha}_k\vartheta_k)] = \gamma B_k^T(H_k^{-1}\vartheta_j-\tilde{\alpha}_k\vartheta_k).
+$$
+Se sabe que $B^T_kB_k = I$, $\vartheta_k = B_kg_k$ y que $H_k = B_kAB_k^T$. Además $g_{k+1} = g_k+\tilde{\alpha}_kAg_k$. Haciendo uso de este conocimiento, se llega a que 
+$$
+g_k+A(-\tilde{\alpha}_kB^T_k\vartheta_k) = \gamma(B_k^TH_k^{-1}\vartheta_k+\tilde{\alpha}_kg_k)
+$$
+$$
+g_k+A(-\tilde{\alpha}_kg_k) = \gamma(B_k^TH_k^{-1}\vartheta_k+\tilde{\alpha}_kg_k)
+$$
+$$
+g_{k+1} = \gamma(B_k^TH_k^{-1}\vartheta_k+\tilde{\alpha}_kg_k)
+$$
+$$
+g_{k+1} = \gamma(B_k^TB_kA^{-1}B_k^T\vartheta_k+\tilde{\alpha}_kg_k)
+$$
+$$
+g_{k+1} = \gamma(A^{-1}g_k+\tilde{\alpha}_kg_k)
+$$
+Ahora, factorizando $A^{-1}$ se tiene
+$$
+g_{k+1} = \gamma A^{-1}(g_k+\tilde{\alpha}_kAg_k)
+$$
+de nuevo, considerando que $g_{k+1} = g_k+\tilde{\alpha}_kAg_k$
+llegamos finalmente a
+$$
+g_{k+1} = \gamma A^{-1}g_{k+1}
+$$
+Es decir $g_{k+1}$ es un eigenvector de la matriz $A$.
+\par Ahora, por hipótesis, sabemos que $x_{k+2}$ no es un minimizador, así que $g_{k+2}\neq 0$ y el algoritmo no se detendrá en la $k+2$-ésima iteración. Entonces, calculando $\alpha_{k+2} = \frac{g_{k+1}^T\Psi(A)g_{k+1}}{g_{k+1}^T\Psi(A)Ag_{k+1}} = 1/\lambda$ tenemos que $g_{k+3} = (I-\alpha_{k+2}A)g_{k+2} = (1-\alpha_{k+2}\lambda)g_{k+2}=0$, lo que implica que $x_{k+3}$ debe ser el minimizador, por lo que se concluye la prueba.
+
+\par Si tomamos $k_0 =2$ en el teorema, el método utilizando el tamaño de paso dado encontrará al minimizador exacto en máximo 5 iteraciones cuando se minimiza una función cuadrática bidimensional fuertemente convexa.
