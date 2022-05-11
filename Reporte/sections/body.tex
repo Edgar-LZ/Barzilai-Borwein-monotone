@@ -15,7 +15,7 @@ para resolver el problema
 $$
 	\min_{x\in\mathbb{R}^n}f(x)
 $$
-donde $f:\mathbb{R}^n \rightarrow \mathbb{R}^n$ es continuamente diferenciable, $g_k=\nabla f(X_k)$ y $\alpha_k>0$ es el tamaño de paso sobre la dirección del gradiente.
+donde $f:\mathbb{R}^n \rightarrow \mathbb{R}^n$ es continuamente diferenciable, $g_k=\nabla f(x_k)$ y $\alpha_k>0$ es el tamaño de paso sobre la dirección del gradiente.
 Queremos optimizar una función cuadrática de la forma:
 $$
 	f(x) = \frac{1}{2}x^TAx- b^Tx
@@ -32,5 +32,70 @@ tal que $0<\sum_{k =- \infty}^{\infty}c_k z^k<+\infty$ para todos los $z\in[\lam
 \par Más adelante se procederá a describir el tamaño de paso $\tilde{\alpha}_k$ que se deriva y se utiliza en el trabajo para minimizar funciones cuadráticas bidimensionales convexas en un máximo de 5 iteraciones. También se hablará de modificaciones y consideraciones que se hacen sobre este tamaño de paso para proponer métodos adaptativos no monótonos de gradiente que utilizan los pasos largo y corto del método de BB junto con algunos pasos montonos usando $\tilde{\alpha}_k(A)$.
 \par A su vez, se discutirán dos variaciones del método desarrollado para minimizar de forma eficiente funciones más genertales utilizando tamaños de paso con retardo.
 
+\subsection*{Tamaño de paso}
+En esta sección se discutirá sobre el tamaño de paso derivado en el trabajo para minimizar funciones cuadráticas bidimiensionales fuertemente convexas bajo la motivación de requerir una terminación finita.
+\par Es necesario observar que la propiedad de que dos gradientes consecutivos generados por el método de máximo descenso, no se mantiene para métodos que utilizan el tamaño de paso general antes definido. También se observa que este método es invariante ante tralaciones y rotaciones cuando se minimizan funciones cuadráticas, por lo que se puede asumir para simplicidad que la matriz $A$ en la definición que dimos para las funciones cuadráticas es una matriz de la forma 
+$$
+	A = \{\lambda_1, ..., \lambda_n\},
+$$
+donde $0<\lambda_1\leq...\leq\lambda_n$.
 
-
+\par Se ha mostrado que una familia de métodos de gradiente entre los que se incluye máximo descenso y mínimo gradiente reducirán asintóticamente sus búsqiedas en un subespacio bidimensional y que se podrían explotar algunas propiedades ortogonales en este subespacio bidimensional para acelerar los métodos. Más adelante se discutirá un caso en el que ocurre que para una función cuadrática, las búsquedas del método de Barzilai-Borwein con tamaño de paso $\alpha_k^{BB1}$ son dominadas en subespacios bidimensionales. Haciendo uso de este conocimiento, se quiere acelerar la convergencia de los métodos con tamaño de paso $\alpha_k$ como el paso general que se propuso anteriormente en un espacio de menos dimensiones si se mantienen propiedades ortogonales.
+\par Suponiendo que para un $k>0$, existe un $q_k$ que satisface
+$$
+	(I-\alpha_{k-1}A)q_k = g_{k-1}
+$$
+Esta $q_k$ es también invariante ante rotaciones y traslaciones, por lo que se puede seguir asumiendo que la matriz $A$ de la función cuadrática es diagonal. Con esto, se tiene el siguiente lema que presenta una propiedad importante para la derivación del tamaño de paso.\par
+\bf Lema 1 (Propiedad Ortogonal) \normalfont Suponiendo que la secuencia $\{g_k\}$ se obtiene aplicando un método de gradiente con pasos como el paso general $\alpha_k)$ para minimizar una función cuadrática y $q_k$ satisface que $(I-\alpha_{k-1}A)q_k = g_{k-1}$. Entonces
+$$
+	q_k^T\Psi(A)g_{k+1} = 0.
+$$
+\it Prueba \normalfont Utilizando la forma en la que se definió $q_k$ y la expresión para el tamaño de paso general $\alpha_k$, se tiene que:
+\begin{align*}
+	q_k^T \Psi(A)g_{k+1} &= q_k^T\Psi(A)(I-\alpha_kA)(I-\alpha_{k-1}A)g_{k-1}\\
+	&= q_k^T(I-\alpha_kA)\Psi(A)(I-\alpha_{k-1}A)g_{k-1}\\
+	&= g_{k-1}^T\Psi(A)(I-\alpha_kA)g_{k-1}\\
+	&=g_{k-1}^T\Psi(A)g_{k-1}-\alpha_kg_{k-1}^T\Psi(A)Ag_{k-1}\\
+	&=g_{k-1}^T\Psi(A)g_{k-1}\left[\frac{g_{k-1}^T\Psi(A)g_{k-1}}{g_{k-1}^T\Psi(A)Ag_{k-1}}-\alpha_k\right] = 0
+\end{align*}
+con lo que se demuestra que el vector $q_k^T$ y $g_{k+1}$ son ortogonales bajo $\Psi(A)$.
+\par Ahora se busca derivar un tamaño de paso que al combinarlo con el método de gradiente general se puede alcanzar una terminación finita para minimizar funciones bidimensionales fuertemente convexas.
+\par Por el Lema 1 se tiene que $g_k^T$  y $q_{k-1}$ son ortogonales bajo $\Psi(A)$ para cualquier $k>0$. Ahora suponga que los vectores $\Psi^r(A)q_{k-1}$ y $\Psi^{1-r}(A)g_k$ son vectores no nulo, con $r\in \mathbb(R)$. Y consideremos el problema de minimizar una función $f$ en un subespacio bidimensional generado por $ u = \frac{\Psi^r(A)q_{k-1}}{\|\Psi^r(A)q_{k-1}\|}$ y $v = \frac{\Psi^r(A)g_{k}}{\|\Psi^r(A)g_{k}\|}$ y sea
+$$
+\phi(t,l):=f\left(x_k+t\frac{\Psi^r(A)q_{k-1}}{\|\Psi^r(A)q_{k-1}\|} + l \frac{\Psi^r(A)g_{k}}{\|\Psi^r(A)g_{k}\|}\right)
+$$
+que al expandir utilizando una serie de Taylor nos lleva a
+\begin{align*}
+	\phi(t,l) = f(x_k)+\nabla^T f(x_k) \left[tu+lv \right] + \frac{1}{2}\left[tu+ lv \right]^T\nabla^2 f(x_k) \left[tu+lv \right] 
+\end{align*}
+Ahora, si definimos la matriz $B_k$ como
+$$
+	B_k =  \left(u, v\right)^T
+$$
+y recordando que $u$ y $v$ forman una base ortogonal para $\mathbb{R}^2$ podemos reescribir la expansión en serie de Taylor de $\phi(t, l)$ como sigue:
+$$
+\phi(t, l) =  f(x_k)+g_k^TB_k^T\begin{pmatrix}t\\l\end{pmatrix} +\frac{1}{2}\begin{pmatrix}t\\l\end{pmatrix}^TB_k A B_k^T\begin{pmatrix}t\\l\end{pmatrix}
+$$
+Ahora, podemos definir
+$$
+\vartheta_k = B_kg_k = \begin{pmatrix}\frac{g_k^T\Psi^r(A)q_{k-1}}{\|\Psi^{r}(A)q_{k-1}\|}\\
+\frac{g_k^T\Psi^{1-r}(A)g_k}{\|\Psi^{1-r}(A)g_k\|}\end{pmatrix}
+$$
+y 
+$$
+H_k = B_kAB_k^T =\begin{pmatrix}
+	\frac{q_{k-1}^T\Psi^{2r}(A)Aq_{k-1}}{\|\Psi^{r}(A)q_{k-1}\|^2} & \frac{q_{k-1}^T\Psi^r(A)Ag_{k}}{\|\Psi^{r}(A)q_{k-1}\|\Psi^{1-r}(A)g_k\| }\\
+	\frac{q_{k-1}^T\Psi^r(A)Ag_{k}}{\|\Psi^{r}(A)q_{k-1}\|\Psi^{1-r}(A)g_k\| } & 
+	\frac{g_k^T\Psi^{2(1-r)}(A)Ag{k}}{\|\Psi^{r}(A)g_k\|^2} 
+\end{pmatrix} 
+$$
+con lo que la expresión para $\phi(t, l)$ se convertiría en
+$$
+\phi(t, l) =  f(x_k)+\vartheta_k^T\begin{pmatrix}t\\l\end{pmatrix} +\frac{1}{2}\begin{pmatrix}t\\l\end{pmatrix}^T H_k\begin{pmatrix}t\\l\end{pmatrix}
+$$
+Denotando las componentes de $H_k$ por $H_k^(ij)$, $i,j = 1,2$ y notando que $B_kB^T_k = I$ se tiene el siguiente teorema de terminación finita
+\par \bf Teorema 1 (Terminación finita) \normalfont Suponga que un método de gradiente se aplica para minimizar una función cuadrática bidimensional con $\alpha_k$ dado por el paso general mencionado anteriormente para todas las $k\neq k_0$ y usa el tamaño de paso
+$$
+\tilde{\alpha}_{k_0} = \frac{2}{\left(H^{(11)}_{k_0} + H^{(22)}_{k_0}\right)+\sqrt{\left(H^{(11)}_{k_0} - H^{(22)}_{k_0}\right)^2 } + 4\left(H_{k_0}^{(12)}\right)^2}
+$$
+en la iteración $k_0$-ésima donde $k_0\geq 2$. Entonces, el método encontrará el minimizador en máximo $k_0+3$ iteraciones.
