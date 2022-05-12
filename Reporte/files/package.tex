@@ -1,52 +1,55 @@
-\usepackage{geometry}
-\usepackage{graphicx}
+\usepackage[labelfont={color=RoyalBlue,bf}]{caption}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{amsmath, amsthm, amssymb, amsfonts}
+\usepackage{fancyhdr,graphicx,lastpage}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage[svgnames]{xcolor}
 \usepackage[utf8]{inputenc}
-\usepackage{enumitem}
-\usepackage{ dsfont }
+\usepackage{subcaption}
+\usepackage{scrextend}
+\usepackage{longtable}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{verbatim}
+\usepackage{hyperref}
+\usepackage{vmargin}
+\usepackage{dcolumn}
 \usepackage{lipsum}
-\usepackage{ amssymb }
-\usepackage{amsmath}
-\usepackage[spanish,es-tabla]{babel}
-\usepackage{listings}
-\usepackage{xcolor}
-\usepackage{algorithmicx}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage{datetime}
-\usepackage{booktabs}
-\usepackage{amsmath}
-\newcommand*{\defeq}{\stackrel{\text{def}}{=}}
-
-\newenvironment{QandA}{\begin{enumerate}[label=\bfseries\arabic*.]}
-	{\end{enumerate}}
-\newenvironment{answered}{\setlength{\parindent}{2em}\par\rule{0.5in}{1pt}\par\normalfont}{}
-
-\spanishdecimal{.}
-
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-
-\lstdefinestyle{mystyle}{
-	backgroundcolor=\color{backcolour},
-	commentstyle=\color{codegreen},
-	keywordstyle=\color{magenta},
-	numberstyle=\tiny\color{codegray},
-	stringstyle=\color{codepurple},
-	basicstyle=\ttfamily\footnotesize,
-	breakatwhitespace=false,
-	breaklines=true,
-	captionpos=b,
-	keepspaces=true,
-	numbers=left,
-	numbersep=5pt,
-	showspaces=false,
-	showstringspaces=false,
-	showtabs=false,
-	tabsize=2
+\usepackage{float}
+\usepackage{bm}
+\usepackage{cite}
+\parindent=0mm
+\addtolength{\textwidth}{2cm}
+\renewcommand{\baselinestretch}{1.2}
+\newtheorem{defi}{Definición}
+\newtheorem{teor}{Teorema}
+\newtheorem{tesis}{Tesis}
+\newtheorem{lema}{Lema}
+\pagestyle{empty}
+\renewcommand{\baselinestretch}{1}
+\renewcommand{\arraystretch}{0.3}
+% Colors for the hyperref package
+\definecolor{urlcolor}{rgb}{0,.145,.698}
+\definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+\definecolor{citecolor}{rgb}{.12,.54,.11}
+\definecolor{def}{rgb}{0.00,0.27,0.87}
+\definecolor{title}{RGB}{2, 62, 138}
+\hypersetup{
+	breaklinks=true,
+	colorlinks=true,
+	urlcolor=urlcolor,
+	linkcolor=linkcolor,
+	citecolor=citecolor,
 }
-
-
-
+\spanishdecimal{.}
+% \usepackage{titling}
+% \renewcommand\maketitlehooka{\null\mbox{}\vfill}
+% \renewcommand\maketitlehookd{\vfill\null}
+\setlength{\parskip}{0.5em}
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+\SetKwInput{KwInput}{Input}
+\SetKwInput{KwOutput}{Output}
+\newcommand*{\defeq}{\stackrel{\text{def}}{=}}

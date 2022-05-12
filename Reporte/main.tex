@@ -1,11 +1,13 @@
-\documentclass[10pt, a4paper]{article}
-
+\documentclass[12pt,letterpaper]{article}
 \input{files/package.tex}
-\geometry{
-	a4paper,
-	left=20mm,
-	top=10mm,
-}
+\setmargins{2cm}
+{1cm}
+{17cm}
+{25cm}
+{10pt}
+{1cm}
+{0pt}
+{2cm}
 \input{sections/title_data.tex}
 \begin{document}
 \input{sections/title.tex}
@@ -13,4 +15,9 @@
 \input{sections/body.tex}
 \input{sections/results.tex}
 \input{sections/conclusions.tex}
+\nocite{*}
+\bibliographystyle{vancouver}
+% \let\Section\section
+% \def\section*#1{\Section{#1}}
+\bibliography{references}
 \end{document}
