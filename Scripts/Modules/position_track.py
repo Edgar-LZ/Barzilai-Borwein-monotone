@@ -37,11 +37,15 @@ class optimize_method_position_track:
         self.method()
         self.save_results()
 
-    def save_results(self) -> None:
-        filename = "{}.csv".format(self.params["search algorithm"])
+    def create_folder_results(self) -> str:
         folder = join(self.params["path results"],
                       self.params["function name"],
                       self.params["position folder"])
+        return folder
+
+    def save_results(self) -> None:
+        filename = "{}.csv".format(self.params["search algorithm"])
+        folder = self.create_folder_results()
         makedirs(folder,
                  exist_ok=True)
         filename = join(folder,
@@ -79,6 +83,7 @@ class optimize_method_position_track:
             if self.stop_functions.iterations(iteration, self.params):
                 break
             iteration += 1
+        self.x = array(self.x)
 
     def barzilai(self):
         """
@@ -121,6 +126,7 @@ class optimize_method_position_track:
                                               self.params):
                 break
             iteration += 1
+        self.x = array(self.x)
 
     def angm(self) -> float:
         """
@@ -180,6 +186,7 @@ class optimize_method_position_track:
             if self.stop_functions.iterations(iteration, self.params):
                 break
             iteration += 1
+        self.x = array(self.x)
 
     def angr1(self) -> float:
         """
@@ -241,6 +248,7 @@ class optimize_method_position_track:
             if self.stop_functions.iterations(iteration, self.params):
                 break
             iteration += 1
+        self.x = array(self.x)
 
     def angr2(self) -> float:
         """
@@ -303,3 +311,4 @@ class optimize_method_position_track:
             if self.stop_functions.iterations(iteration, self.params):
                 break
             iteration += 1
+        self.x = array(self.x)

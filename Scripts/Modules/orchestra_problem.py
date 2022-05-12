@@ -1,3 +1,4 @@
+from pandas import DataFrame
 from .optimize import optimize_method
 from os import makedirs as mkdir
 from numpy.random import normal
@@ -54,3 +55,6 @@ class orchestra_problem:
         results = self.algorithm.results
         results.index.name = "Iteration"
         results.to_csv(filename)
+
+    def get_results(self) -> DataFrame:
+        return self.algorithm.results.copy()
