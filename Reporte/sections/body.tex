@@ -10,13 +10,7 @@ En 1988 Barzilai y Borwein propusieron dos tamaños de paso para mejorar el dese
 % desigualdad de Cauchy-Schwarz $\|s_{k-1}\|^2\|y_{k-1}\|^2 \geq (s_{k-1}^Ty_{k-1})^2$
 donde $s_{k-1} = x_k - x_{k-1}$ y $y_{k-1} = g_k - g_{k-1}$. Considerando la desigualdad de Cauchy-Schwarz observa que cuando $s_{k-1}^Ty_{k-1}$ es mayor a cero, entonces se cumple que $\alpha_k^{BB1} \geq \alpha_k^{BB2}$. Esto por ello, que se suele llamar paso largo e Barzilai-Borwein al paso $\alpha_k^{BB1}$ y paso corto a $\alpha_k^{BB2}$. Para una función cuadrática, el paso $\alpha_k^{BB1}$ es el tamaño de paso de máximo descenso con retardo de un paso y $\alpha_k^{BB2}$ será el paso del método de mínimo gradiente.
 
-El método de Barzilai-Borwein (BB) tiene convergencia R-superlineal para minimizar funciones cuadráticas bidimensionales fuertemente convexas y R-lineal para el caso general n-dimensional (BUSCAR PAPER).
-
-El método de BB cuenta con la propiedad de reducir los valores de la función objetivo de manera no monóntona. Esta propiedad es una característica intrínseca la cual es la razón de su eficiencia. Sin embargo, es importante para los métodos de gradiente mantener la monotonicidad.
-
-Debido a la eficiencia del algoritmo BB y la complejidad de obtener un tamaño de paso $\alpha_k^{SD}$ para el caso general, el trabajo se motiva en la búsqueda de una forma de aceleración para el método de Barzilai-Borwein incorporando pasos monótonos.
-
-Considérese el problema de acelerar los métodos de descenso de gradiente que generan secuencias de iterados de la forma
+El método de Barzilai-Borwein (BB) tiene convergencia R-superlineal para minimizar funciones cuadráticas bidimensionales fuertemente convexas y R-lineal para el caso general n-dimensional\cite{Fletcher_2005}. El método de BB cuenta con la propiedad de reducir los valores de la función objetivo de manera no monóntona. Esta propiedad es una característica intrínseca la cual es la razón de su eficiencia. Sin embargo, es importante para los métodos de gradiente mantener la monotonicidad. Debido a la eficiencia del algoritmo BB y la complejidad de obtener un tamaño de paso $\alpha_k^{SD}$ para el caso general, el trabajo se motiva en la búsqueda de una forma de aceleración para el método de Barzilai-Borwein incorporando pasos monótonos. Considérese el problema de acelerar los métodos de descenso de gradiente que generan secuencias de iterados de la forma
 
 \begin{equation*}
 	x_{k+1} = x_k - \alpha_k g_k
@@ -57,14 +51,14 @@ Los valores de $\lambda_1$ y $\lambda_n$ es el eigenvalor mínimo y máximo resp
 
 % En esta sección se discutirá sobre el tamaño de paso derivado en el trabajo para minimizar funciones cuadráticas bidimiensionales fuertemente convexas bajo la motivación de requerir una terminación finita.
 
-Se tiene que dos gradientes consecutivos generados por el método de máximo descenso, no se mantienen para métodos que utilizan el tamaño de paso general antes definido. También se observa que el método BB es invariante ante tralaciones y rotaciones cuando se minimizan funciones cuadráticas (BUSCAR PAPER), por lo que se puede asumir para simplicidad que la matriz $A$ tiene la forma mostrada en la ecuación \ref{eq:matriz_A}.
+Se tiene que dos gradientes consecutivos generados por el método de máximo descenso, no se mantienen para métodos que utilizan el tamaño de paso general antes definido. También se observa que el método BB es invariante ante tralaciones y rotaciones cuando se minimizan funciones cuadráticas\cite{dai_2005}, por lo que se puede asumir para simplicidad que la matriz $A$ tiene la forma mostrada en la ecuación \ref{eq:matriz_A}.
 
 \begin{equation}
-	A = \{\lambda_1, ..., \lambda_n\}, \qquad \text{donde} \qquad 0<\lambda_1\leq...\leq\lambda_n \label{eq:matriz_A}
+	A = \text{diag}\{\lambda_1, ..., \lambda_n\}, \qquad \text{donde} \qquad 0<\lambda_1\leq...\leq\lambda_n \label{eq:matriz_A}
 \end{equation}
 
 
-Se ha mostrado que una familia de métodos de gradiente entre los que se incluye máximo descenso y mínimo gradiente reducirán asintóticamente sus búsquedas en un subespacio bidimensional y que se podrían explotar algunas propiedades ortogonales en este subespacio bidimensional para acelerar los métodos (BUSCAR PAPER). %Más adelante se discutirá un caso en el que ocurre que para una función cuadrática, las búsquedas del método de Barzilai-Borwein con tamaño de paso $\alpha_k^{BB1}$ son dominadas en subespacios bidimensionales.
+Se ha mostrado que una familia de métodos de gradiente entre los que se incluye máximo descenso y mínimo gradiente reducirán asintóticamente sus búsquedas en un subespacio bidimensional. Se explotaron algunas propiedades ortogonales en este subespacio bidimensional para acelerar los métodos\cite{huang_2022}. %Más adelante se discutirá un caso en el que ocurre que para una función cuadrática, las búsquedas del método de Barzilai-Borwein con tamaño de paso $\alpha_k^{BB1}$ son dominadas en subespacios bidimensionales.
 Es por ello que si se quiere acelerar la convergencia de los métodos con tamaño de paso $\alpha_k$ (ecuación \ref{eq:def_alpha_k_psiA}) en un subespacio de menor dimensionalidad se deben mantener propiedades ortogonales. Suponiendo que para un $k>0$, existe un $q_k$ que satisface
 
 \begin{equation*}
