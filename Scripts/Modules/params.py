@@ -173,11 +173,16 @@ def get_graphics_params(params: dict) -> dict:
 
 def get_methods_names() -> dict:
     methods = {
-        "steepest": "#03071E",
-        "barzilai": "#6A040F",
-        "ANGM": "#D00000",
-        "ANGR1": "#E85D04",
-        "ANGR2": "#FAA307",
+        "steepest": {"color": "#03071E",
+                     "title": "SD"},
+        "barzilai": {"color": "#6A040F",
+                     "title": "BB"},
+        "ANGM":     {"color": "#D00000",
+                     "title": "ANGM"},
+        "ANGR1":    {"color": "#E85D04",
+                     "title": "ANGR1"},
+        "ANGR2":    {"color": "#FAA307",
+                     "title": "ANGR2"},
     }
     return methods
 

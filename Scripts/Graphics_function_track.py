@@ -6,6 +6,7 @@ from numpy.linalg import norm
 from pandas import read_csv
 from os.path import join
 from numpy import array
+from os import makedirs
 
 
 def create_temporal_params(x: array) -> dict:
@@ -36,7 +37,8 @@ for function_name in datasets:
                                    figsize=(16, 8))
     for method in methods:
         params["method"] = method
-        color = methods[method]
+        color = methods[method]["color"]
+        title = methods[method]["title"]
         params = _define_function_params(params)
         function = functions_class(params)
         algorithm = optimize_method_position_track(params)
@@ -57,7 +59,7 @@ for function_name in datasets:
                  marker=".",
                  ls="--",
                  alpha=0.7,
-                 label=method,
+                 label=title,
                  color=color)
         ax1.grid(ls="--",
                  color="#000000",
