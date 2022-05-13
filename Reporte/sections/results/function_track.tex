@@ -1,0 +1,32 @@
+\subsection*{Estabilidad de resultados}
+
+Se realizaron 100 ejecucciones para cada par de función y método de optimización partiendo de un punto aleatorio dado por la distribución normal con media 0 y desviación 10 (ecuación \ref{eq:initial_point}).
+
+\begin{equation}
+    x_0 =  \mathcal{N}(\mu=0;\sigma=10)
+    \label{eq:initial_point}
+\end{equation}
+
+En la figura \ref{fig:quadracic_function} se muestra el valor de la función y la norma del gradiente para la mejor iteración para cada método con la función cuadrática con matriz diagonal.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=17cm]{graphics/function/quadratic.png}
+    \caption{Valor de la función y norma del gradiente en cada iteración de la mejor ejecución de cada método de optimización de la función cuadrática con matriz diagonal.}
+    \label{fig:quadracic_function}
+\end{figure}
+
+Se realizó el mismo procedimiento con la función de Rosembrock. En la figura \ref{fig:rosembrock_function} se muestra el resultado del valor de la función y norma del gradiente para la mejor iteración de cada método.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=17cm]{graphics/function/rosembrock.png}
+    \caption{Valor de la función y norma del gradiente en cada iteración de la mejor ejecución de cada método de optimización de la función de Rosembrock con matriz diagonal.}
+    \label{fig:rosembrock_function}
+\end{figure}
+
+En las tablas \ref{table:mean} y \ref{table:deviation} se muestran las medias y desviaciones estandar para el valor de la función y norma de gradiente en el punto óptimio y el número de iteraciones realizadas por cada método y función.
+
+\input{sections/results/tables/mean.tex}
+
+\input{sections/results/tables/deviation.tex}
