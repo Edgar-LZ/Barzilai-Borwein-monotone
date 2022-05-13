@@ -1,6 +1,4 @@
-from os import makedirs
-from pytest import param
-from Modules.params import get_params, _define_function_params
+from Modules.params import get_methods_names, get_params, _define_function_params
 from Modules.position_track import optimize_method_position_track
 from Modules.functions import functions_class
 import matplotlib.pyplot as plt
@@ -15,14 +13,6 @@ def create_temporal_params(x: array) -> dict:
     return params
 
 
-methods = {
-    "steepest": "#03071E",
-    "barzilai": "#6A040F",
-    "ANGM": "#D00000",
-    "ANGR1": "#E85D04",
-    "ANGR2": "#FAA307",
-}
-
 datasets = {"rosembrock": {"x ticks": range(0, 105, 5),
                            "x lim": 100,
                            "y1 lim": 20,
@@ -35,7 +25,7 @@ datasets = {"rosembrock": {"x ticks": range(0, 105, 5),
                           "lambda": 10,
                           },
             }
-
+methods = get_methods_names()
 params = get_params()
 for function_name in datasets:
     params["function name"] = function_name

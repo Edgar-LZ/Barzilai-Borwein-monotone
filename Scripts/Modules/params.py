@@ -169,3 +169,35 @@ def get_graphics_params(params: dict) -> dict:
                 }
     params.update(datasets[params["method"]])
     return params
+
+
+def get_methods_names() -> dict:
+    methods = {
+        "steepest": "#03071E",
+        "barzilai": "#6A040F",
+        "ANGM": "#D00000",
+        "ANGR1": "#E85D04",
+        "ANGR2": "#FAA307",
+    }
+    return methods
+
+
+def get_function_names() -> dict:
+    functions = [
+        "quadratic",
+        "paper",
+        "rosembrock",
+        "wood"
+    ]
+    return functions
+
+
+def get_search_methods_names() -> dict:
+    methods = {
+        "bisection": "#03071E",
+        "barzilai": "#6A040F",
+        "ANGM": "#D00000",
+        "ANRG1": "#E85D04",
+        "ANRG2": "#FAA307",
+    }
+    return methods
