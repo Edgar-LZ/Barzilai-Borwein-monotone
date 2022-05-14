@@ -1,1 +1,5 @@
 \section*{Conclusiones}
+
+Se logró implementar los métodos descritos en el artículo y comprobar para el caso cuadrático considerado  que se logra una terminación finita a la hora de minimizar estas funciones, en la gran mayoría de los casos siendo esta terminación en tan solo 5 iteraciones, cuando el método de Barzilai-Borwein original llega a tomar hasta 1500 pasos y máximo descenso 713.  También se logró observar con esta función cómo los métodos propuestos, logran reducir las componentes del gradiente correspondientes a los eigenvalores más grandes de la matriz, cuando los otros métodos tienen dificultad para esto, tardando más en llegar al óptimo.
+\par Para la función de Wood, el método de Barzilai y Borwein y los métodos propuestos en el artículo se quedan atrapados en mínimos locales, cuando el método de máximo descenso no lo hace.
+\par En general, los métodos propuestos muestran tener un mejor desempeño a la hora de minimizar las funciones de prueba utilizada, con excepción de la función de Wood y destacando notoriamente en el caso cuadrático bidimensional.
