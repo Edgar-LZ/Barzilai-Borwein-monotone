@@ -12,7 +12,7 @@ donde $b\in\mathbb{R}^n$ y $A$ es una matriz positiva definida en $\mathbb{R}^{n
     Ax=b
 \end{equation*}
 
-El problema empieza a tener dificultades cuando el tamaño de la matriz aumenta y esta contiene ceros en sus elementos (caso sparce). Esto provoca que la factorización por Cholesky sea impráctica por el tiempo de ejecucción o el espacio en memoria.  En 1988 Barzilai y Borwein\cite{barzilai_1988} propusieron dos tamaños de paso para mejorar el desempeño de métodos de descenso de gradiente. La elección de los tamaños de paso propuestos estan basados en métodos Cuasi-Newton. Donde $\alpha_k$ es remplazada por la matriz $D_k$ tal que
+El problema empieza a tener dificultades cuando el tamaño de la matriz aumenta y esta contiene ceros en sus elementos (caso sparce). Esto provoca que la factorización por Cholesky sea impráctica por el tiempo de ejecucción o el espacio en memoria.  En 1988 Barzilai y Borwein\cite{barzilai_1988} propusieron dos tamaños de paso para mejorar el desempeño de métodos de descenso de gradiente. La elección de los tamaños de paso propuestos estan basados en métodos Cuasi-Newton, donde el tamaño de paso ($\alpha_k$) es remplazada por la matriz $D_k$ tal que
 
 \begin{equation}
     D_k = \alpha_k \mathit{I}

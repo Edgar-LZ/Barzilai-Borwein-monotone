@@ -5,7 +5,7 @@ Los métodos de busqueda antes mencionados fueron probados con las siguientes fu
 La función de Rosembrock se define en la ecuación \ref{eq:rosembrock}.
 
 \begin{equation}
-    f(x) = \sum_{i=1}^{n-1}  100(x_{i+1}-x_{i}^2)^2 +(1-x_i)
+    f(x) = \sum_{i=1}^{n-1}  100(x_{i+1}-x_{i}^2)^2 +(1-x_i)^2
     \label{eq:rosembrock}
 \end{equation}
 
@@ -86,9 +86,9 @@ donde $ncond=log \kappa$ con $\kappa = 10^3$ y $n=10$. Calculando su gradiente s
 
 por consecuente, el hessiano de la función es unicamente la matriz $A$.
 
-\subsection*{Cuadratica de la forma diag\{1,$\lambda$\}}
+\subsection*{Cuadrática de la forma diag\{1,$\lambda$\}}
 
-En el mismo artículo\cite{huang_2022_1} se propone una función cuadratica donde la matriz esta definida de la siguiente manera:
+En el mismo artículo\cite{huang_2022_1} se propone una función cuadrática donde la matriz esta definida de la siguiente manera:
 
 \begin{equation*}
     A = diag\{1,\lambda\}
