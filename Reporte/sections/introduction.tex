@@ -1,24 +1,25 @@
 \section*{Introducción}
 
-El estudio de la solución de la optmización de una función cuadratica de la forma
+\par El estudio del problema de optimización de una función cuadratica de la forma
 
 \begin{equation}
     f(x) = \frac{1}{2}x^TAx- b^Tx \label{eq:quadratic_function}
 \end{equation}
 
-donde $b\in\mathbb{R}^n$ y $A$ es una matriz positiva definida en $\mathbb{R}^{n\times n}$, es equivalente a la solución del sistema de ecuaciones
+donde $b\in\mathbb{R}^n$ y $A$ es una matriz definida positiva  en $\mathbb{R}^{n\times n}$ resulta ser una base importante a la hora de resolver problemas más complejos. El resolver este problema es equivalente a encontrar la solución del sistema de ecuaciones
 
 \begin{equation*}
     Ax=b
 \end{equation*}
 
-El problema empieza a tener dificultades cuando el tamaño de la matriz aumenta y esta contiene ceros en sus elementos (caso sparce). Esto provoca que la factorización por Cholesky sea impráctica por el tiempo de ejecucción o el espacio en memoria.  En 1988 Barzilai y Borwein\cite{barzilai_1988} propusieron dos tamaños de paso para mejorar el desempeño de métodos de descenso de gradiente. La elección de los tamaños de paso propuestos estan basados en métodos Cuasi-Newton, donde el tamaño de paso ($\alpha_k$) es remplazada por la matriz $D_k$ tal que
+\par Cuando la el tamaño de la matriz $A$ es grande y $A$ es una matriz dispersa, una solución al sistema de ecuaciones por factorización de Cholesky comienza a resultar impráctica, ya sea por el tiempo de ejecución o el espacio en memoria que se necesitaría. En general, la solución del sistema de ecuaciones para casos de gran dimensionalidad llega a ser computacionalmente costosa, por lo que el desarrollo de métodos iterativos es de gran importancia para resolver estos problemas, en especial en esos casos.
+\par En 1988 Barzilai y Borwein\cite{barzilai_1988} propusieron dos tamaños de paso para mejorar el desempeño de métodos de descenso de gradiente. La elección de los tamaños de paso propuestos se basa en métodos Cuasi-Newton, en particular se usa una matriz diagonal $D_k$ de la forma 
 
 \begin{equation}
     D_k = \alpha_k \mathit{I}
 \end{equation}
 
-La matriz $D_k$ es una aproximación de la inversa del hessiano. El tamaño de paso es calculado a partir de la optimización de $D_k^{-1}$  (BB1) y  $D_k$ (BB2) tal que satisfagan la ecuación de la secante desde un punto de vista de mínimos cuadrados (ecuación \ref{eq:definition_barzilai}).
+para aproximar la inversa del hessiano de $f(x)$, en donde $\alpha_k$ es una constante que cambia con cada iteración. El tamaño de paso es calculado a partir de la optimización de $D_k^{-1}$  (BB1) y  $D_k$ (BB2) tal que satisfagan la ecuación de la secante desde un punto de vista de mínimos cuadrados (ecuación \ref{eq:definition_barzilai}).
 
 \begin{equation}
     \min_{D=\alpha \mathit{I}} ||D^{-1}s_{k-1}-y_{k-1}|| \qquad \min_{D=\alpha \mathit{I}} ||s_{k-1}-Dy_{k-1}|| \label{eq:definition_barzilai}
@@ -33,10 +34,11 @@ Las soluciones del problema son las descritas en la ecuación \ref{eq:barzilai_s
 \end{equation}
 
 % desigualdad de Cauchy-Schwarz $\|s_{k-1}\|^2\|y_{k-1}\|^2 \geq (s_{k-1}^Ty_{k-1})^2$
-Considerando la desigualdad de Cauchy-Schwarz observa que cuando $s_{k-1}^Ty_{k-1}$ es mayor a cero, entonces se cumple que $\alpha_k^{BB1} \geq \alpha_k^{BB2}$. Esto por ello, que se suele llamar paso largo e Barzilai-Borwein al paso $\alpha_k^{BB1}$ y paso corto a $\alpha_k^{BB2}$. Para una función cuadrática, el paso $\alpha_k^{BB1}$ es el tamaño de paso de máximo descenso con retardo de un paso y $\alpha_k^{BB2}$ será el paso del método de mínimo gradiente. En 1993, Raydan demuestra la convergencia del método para el caso cuadrático\cite{raydan_1993}, y en 1997\cite{raydan_1997} introdujó una estrategia global basada en una búsqueda lineal no monótona, la cual establece la convergencia global para el método de Barzilai-Borwein (BB) para los casos no cuadráticos. El método BB no asegura la convergencia cuando la función objetivo es fuertemente convexa. Para ello existen varios métodos para estabilizar la convergencia del problema. Uno de los métodos para estabilizar a estos métodos es la elección del tamaño de paso en cada iteración de la siguiente forma:
+Al considerar la desigualdad de Cauchy-Schwarz observa que cuando $s_{k-1}^Ty_{k-1}$ es mayor a cero, se cumple que $\alpha_k^{BB1} \geq \alpha_k^{BB2}$. Debido a esto se suele llamar a $\alpha_k^{BB1}$ tamaño de paso largo de Barzilai-Borwein y paso corto a $\alpha_k^{BB2}$. Para el caso particular en el que $f$ es una función cuadrática, el paso $\alpha_k^{BB1}$ es el tamaño de paso utilizado en el método de máximo descenso con un retardo de un paso y $\alpha_k^{BB2}$ es el tamaño de paso del método de mínimo gradiente. 
+\par En 1993, Raydan demuestra la convergencia del método de Barzilai-Borwein para el caso cuadrático\cite{raydan_1993}, y en 1997\cite{raydan_1997} introdujó una estrategia global basada en una búsqueda lineal no monótona, que establece la convergencia global para el método de Barzilai-Borwein (BB) para los casos no cuadráticos. El método BB no asegura la convergencia cuando la función objetivo es fuertemente convexa. Para ello existen distontos algoritmos para estabilizar la convergencia del problema. Uno de estos métodos es la elección del tamaño de paso en cada iteración de la siguiente forma:
 
 \begin{equation}
     \alpha_k = \min \alpha_k^{BB}, \Delta
 \end{equation}
 
-donde $\Delta$ es un valor fijo. En el artículo de Oleg Burdakov\cite{burdakob_2019} realiza varios experimentos con esta estrategia y obtuvo que para la función de rosembrock, el valor de $\Delta$ con mejores resultados fue 0.1. Por esta misma razón se siguen explorando estrategias que complementen al método BB para la convergencia global en funciones fuertemente convexas.
+donde $\Delta$ es un valor fijo. En el artículo de Oleg Burdakov\cite{burdakob_2019} realiza varios experimentos con esta estrategia y obtuvo que para la función de Rosembrock, el valor de $\Delta$ con mejores resultados fue 0.1. Por esta misma razón se siguen explorando estrategias que complementen al método BB para convergencia global en funciones fuertemente convexas.
