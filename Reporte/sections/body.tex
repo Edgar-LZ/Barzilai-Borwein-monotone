@@ -1,7 +1,8 @@
 
 \section*{Desarrollo}
 
-El método (BB) tiene convergencia R-superlineal para minimizar funciones cuadráticas bidimensionales fuertemente convexas y R-lineal para el caso general n-dimensional\cite{Fletcher_2005}. El método de BB cuenta con la propiedad de reducir los valores de la función objetivo de manera no monóntona. Esta propiedad es una característica intrínseca la cual es la razón de su eficiencia. Sin embargo, es importante para los métodos de gradiente mantener la monotonicidad. Debido a la eficiencia del algoritmo BB y la complejidad de obtener un tamaño de paso $\alpha_k^{SD}$ para el caso general, el trabajo se motiva en la búsqueda de una forma de aceleración para el método de Barzilai-Borwein incorporando pasos monótonos. Considérese el problema de acelerar los métodos de descenso de gradiente que generan secuencias de iterados de la forma
+El método de BB tiene convergencia R-superlineal para minimizar funciones cuadráticas bidimensionales fuertemente convexas y R-lineal para el caso general n-dimensional\cite{Fletcher_2005}. Este método también cuenta con la propiedad de reducir los valores de la función objetivo de manera no monóntona, propiedad que es una característica intrínseca del método y es la razón de su eficiencia. Sin embargo, es importante para los métodos de gradiente mantener la monotonicidad.
+\par Debido a la eficiencia del algoritmo BB y la complejidad de obtener un tamaño de paso $\alpha_k^{SD}$ para el caso general, el trabajo se motiva en la búsqueda de una forma de aceleración para el método de Barzilai-Borwein incorporando pasos monótonos en la búsqueda. \par Considérese el problema de acelerar los métodos de descenso de gradiente que generan secuencias de iterados de la forma
 
 \begin{equation*}
     x_{k+1} = x_k - \alpha_k g_k
@@ -13,19 +14,19 @@ para resolver el problema
     \min_{x\in\mathbb{R}^n}f(x)
 \end{equation*}
 
-donde $f:\mathbb{R}^n \rightarrow \mathbb{R}^n$ es continuamente diferenciable, $g_k=\nabla f(x_k)$ y $\alpha_k>0$ es el tamaño de paso sobre la dirección del gradiente. En particular se usara una función cuadrática (ecuación \ref{eq:quadratic_function}) utilizando el tamaño de paso mostrado en la ecuación \ref{eq:def_alpha_k_psiA}.
+donde $f:\mathbb{R}^n \rightarrow \mathbb{R}^n$ es continuamente diferenciable, $g_k=\nabla f(x_k)$ y $\alpha_k>0$ es el tamaño de paso sobre la dirección del gradiente. En particular se considerará una función cuadrática de la forma \ref{eq:quadratic_function} utilizando el tamaño de paso mostrado en la ecuación \ref{eq:def_alpha_k_psiA}.
 
 \begin{equation}
     \alpha_k(\Psi(A)) = \frac{g_{k-1}^Tg_{k-1}}{g^T_{k-1}\Psi(A)Ag_{k-1}} \label{eq:def_alpha_k_psiA}
 \end{equation}
 
-Donde $\Psi(\cdot)$ es una función real analítica en $[\lambda_1, \lambda_n]$ que se puede expresar como una serie de potencias (ecuación \ref{eq:serie_de_potencias_psi}).
+Donde $\Psi(\cdot)$ es una función real analítica en $[\lambda_1, \lambda_n]$ que se puede expresar como una serie de Laurent (ecuación \ref{eq:serie_de_potencias_psi}).
 
 \begin{equation}
     \Psi(z) = \sum\limits_{k=-\infty}^{\infty} c_kz^k,\ c_k\in \mathbb{R}^n  \;\; \text{tal que} \;\; 0<\sum_{k =- \infty}^{\infty}c_k z^k<+\infty \forall z \in[\lambda_1,  \lambda_n]  \label{eq:serie_de_potencias_psi}
 \end{equation}
 
-Los valores de $\lambda_1$ y $\lambda_n$ es el eigenvalor mínimo y máximo respectivamente. Se puede observar que los dos tamaños de paso de Barzilai-Borwein $\alpha_k^{BB1}$ y $\alpha_k^{BB2}$ se pueden calcular a partir de un tamaño de paso más general tomando a $\Psi(A) = I$ y $\Psi(A) = A$ en la ecuación \ref{eq:def_alpha_k_psiA}.
+donde $\lambda_1$ y $\lambda_n$ son el eigenvalor de menor valor y mayor valor respectivamente. Se puede observar que los dos tamaños de paso de Barzilai-Borwein $\alpha_k^{BB1}$ y $\alpha_k^{BB2}$ se pueden calcular a partir del tamaño de paso general \ref{eq:def_alpha_k_psiA} tomando $\Psi(A) = I$ y $\Psi(A) = A$.
 
 % ------------------------------------------
 % Más adelante se procederá a describir el tamaño de paso $\tilde{\alpha}_k$ que se deriva y se utiliza en el trabajo para minimizar funciones cuadráticas bidimensionales convexas en un máximo de 5 iteraciones. También se hablará de modificaciones y consideraciones que se hacen sobre este tamaño de paso para proponer métodos adaptativos no monótonos de gradiente que utilizan los pasos largo y corto del método de BB junto con algunos pasos montonos usando $\tilde{\alpha}_k(A)$. A su vez, se discutirán dos variaciones del método desarrollado para minimizar de forma eficiente funciones más genertales utilizando tamaños de paso con retardo.
@@ -36,21 +37,22 @@ Los valores de $\lambda_1$ y $\lambda_n$ es el eigenvalor mínimo y máximo resp
 
 % En esta sección se discutirá sobre el tamaño de paso derivado en el trabajo para minimizar funciones cuadráticas bidimiensionales fuertemente convexas bajo la motivación de requerir una terminación finita.
 
-Se tiene que, dos gradientes consecutivos generados por el método de máximo descenso no se mantienen para métodos que utilizan el tamaño de paso general antes definido. Se observa que el método BB es invariante ante traslaciones y rotaciones cuando se minimizan funciones cuadráticas\cite{dai_2005}, por lo que se puede asumir para simplicidad que la matriz $A$ tiene la forma mostrada en la ecuación \ref{eq:matriz_A}.
+La propiedad clave de ortogonalidad para dos gradientes consecutivos generados por el método de máximo descenso no se mantiene para los métodos utilizando el tamaño de paso general \ref{eq:def_alpha_k_psiA} antes definido. Además, se observa que el método \ref{eq:def_alpha_k_psiA} es invariante ante traslaciones y rotaciones cuando se minimizan funciones cuadráticas\cite{dai_2005}, por lo que se puede asumir para simplicidad que la matriz $A$ tiene la forma mostrada en la ecuación \ref{eq:matriz_A}.
 
 \begin{equation}
     A = \text{diag}\{\lambda_1, ..., \lambda_n\}, \qquad \text{donde} \qquad 0<\lambda_1\leq...\leq\lambda_n \label{eq:matriz_A}
 \end{equation}
 
-Se ha mostrado que una familia de métodos de gradiente entre los que se incluye máximo descenso y mínimo gradiente reducirán asintóticamente sus búsquedas en un subespacio bidimensional. Se explotaron algunas propiedades ortogonales en este subespacio bidimensional para acelerar los métodos\cite{huang_2022}. %Más adelante se discutirá un caso en el que ocurre que para una función cuadrática, las búsquedas del método de Barzilai-Borwein con tamaño de paso $\alpha_k^{BB1}$ son dominadas en subespacios bidimensionales.
-Es por ello que si se quiere acelerar la convergencia de los métodos con tamaño de paso $\alpha_k$ (ecuación \ref{eq:def_alpha_k_psiA}) en un subespacio de menor dimensionalidad se deben mantener propiedades ortogonales. Suponiendo que para un $k>0$, existe un $q_k$ que satisface
+Se ha mostrado que una familia de métodos de gradiente entre los que se incluye máximo descenso y mínimo gradiente reducirán asintóticamente sus búsquedas a un subespacio bidimensional, y que es posible aprovechar propiedades ortogonales de este subespacio para acelerar su convergencia \cite{huang_2022}. %Más adelante se discutirá un caso en el que ocurre que para una función cuadrática, las búsquedas del método de Barzilai-Borwein con tamaño de paso $\alpha_k^{BB1}$ son dominadas en subespacios bidimensionales.
+Buscando el mismo objetivo para los métodos con tamaño de paso $\alpha_k$ (ecuación \ref{eq:def_alpha_k_psiA}) se quieren aprovechar propiedades ortogonales dentro de un subespacio bidimensional.
+\par Suponiendo que para un $k>0$, existe un $q_k$ que satisface
 
 \begin{equation}
     (I-\alpha_{k-1}A)q_k = g_{k-1}
     \label{eq:qdef}
 \end{equation}
 
-donde $q_k$ es invariante ante rotaciones y traslaciones, por lo que se puede asumiendo que la matriz $A$ corresponde a una matriz diagonal de una función cuadrática. Con esto, se tiene el lema \ref{lemma:qk_psi_gk1} que presenta una propiedad para la derivación del tamaño de paso.
+Este $q_k$ es invariante ante rotaciones y traslaciones, por lo que se puede continuar asumiendo que la matriz $A$ corresponde a una matriz diagonal de una función cuadrática. Con esto, se tiene el lema \ref{lemma:qk_psi_gk1} que presenta una propiedad para la derivación del tamaño de paso.
 
 \begin{lema}
     Suponiendo que la secuencia $\{g_k\}$ se obtiene aplicando un método de gradiente con pasos como el paso general ($\alpha_k)$ para minimizar una función cuadrática y $q_k$ satisface que $(I-\alpha_{k-1}A)q_k = g_{k-1}$. Entonces
@@ -73,14 +75,14 @@ Para probar el lema \ref{lemma:qk_psi_gk1} se tiene que:
 
 con lo que se demuestra que el vector $q_k^T$ y $g_{k+1}$ son ortogonales bajo $\Psi(A)$.
 
-Ahora suponemos que los vectores $\Psi^r(A)q_{k-1}$ y $\Psi^{1-r}(A)g_k$ son vectores no nulo, con $r\in\mathbb(R)$. Considerando el problema de minimizar una función $f$ en un subespacio bidimensional generado por
+Ahora suponiendo que los vectores $\Psi^r(A)q_{k-1}$ y $\Psi^{1-r}(A)g_k$ son vectores no nulos, con $r\in\mathbb{R}$ y considerando el problema de minimizar una función $f$ en un subespacio bidimensional generado por
 
 \begin{equation}
     u = \frac{\Psi^r(A)q_{k-1}}{|\Psi^r(A)q_{k-1}|} \qquad
     v = \frac{\Psi^r(A)g_{k}}{|\Psi^r(A)g_{k}|} \label{eq:u_v}
 \end{equation}
 
-donde $u$ y $v$ forman una base ortogonal para $\mathbb{R}^2$. Defindiendo una función $\phi$ como
+donde $u$ y $v$ forman una base ortogonal para $\mathbb{R}^2$. Se define una función $\phi$ como
 
 \begin{equation}
     \phi(t,l):=f\left(x_k+t\frac{\Psi^r(A)q_{k-1}}{\|\Psi^r(A)q_{k-1}\|} + l \frac{\Psi^r(A)g_{k}}{\|\Psi^r(A)g_{k}\|}\right) \label{eq:phi_definition}
@@ -115,7 +117,7 @@ Definiendo el vector $\vartheta$ como
     \label{eq:vartheta_k}
 \end{equation}
 
-y al hessiano de $f$ en el paso $k$ como
+y a la matriz $H_k$ como
 
 \begin{equation}
     H_k = B_kAB_k^T =\begin{pmatrix}
@@ -125,7 +127,7 @@ y al hessiano de $f$ en el paso $k$ como
     \end{pmatrix} \label{eq:hk_bkabk}
 \end{equation}
 
-Entonces la función $f\phi(t, l)$ se puede escribir como en la ecuación \ref{eq:phi_with_vectors}.
+es posible expresar la función $\phi(t, l)$ como en la ecuación \ref{eq:phi_with_vectors}.
 
 \begin{equation}
     \phi(t, l) =  f(x_k)+\vartheta_k^T
@@ -142,7 +144,7 @@ Entonces la función $f\phi(t, l)$ se puede escribir como en la ecuación \ref{e
 \end{equation}
 
 
-Denotando las componentes de $H_k$ por $H_k^(ij)$, $i,j = 1,2$ y notando que $B_kB^T_k = I$ se tiene el teorema \ref{teo:alpha_tilde}.
+Denotando las componentes de $H_k$ por $H_k^{(ij)}$, $i,j = 1,2$ y notando que $B_kB^T_k = I$ se tiene el teorema \ref{teo:alpha_tilde}.
 
 \begin{teor}[Terminación finita]
 
@@ -157,7 +159,7 @@ Denotando las componentes de $H_k$ por $H_k^(ij)$, $i,j = 1,2$ y notando que $B_
 \end{teor}
 
 
-Para demostrar el teorema \ref{teo:alpha_tilde} suponemos que $x_k$ no es un minimizador para toda $k=1, ..., k_0+1$. Para simplificar durante la prueba, se utilizará comom notación $k$ para referirse a $k_0$.
+Para demostrar el teorema \ref{teo:alpha_tilde} suponemos que $x_k$ no es un minimizador para toda $k=1, ..., k_0+2$. Para simplificar durante la prueba, se utilizará comom notación $k$ para referirse a $k_0$.
 
 Es necesario observar que $\tilde{\alpha_k}$ satisface la ecuación \ref{eq:alpha_tilde}.
 
@@ -296,12 +298,12 @@ Ahora, de \ref{eq:alphakBB1new} y \ref{eq:alphakBB2new} se tiene
 
 En consecuencia, tanto $\tilde{\alpha}_k^{BB1}$ como $\tilde{\alpha}_k^{BB2}$ son pasos cortos y monótos que reducen tanto el valor de la función como el gradiente respectivamente, y del teorema \ref{teo:alpha_tilde} se puede concluir que si insertamos estos pasos en los métodos BB1 y BB2, se contará con terminación finita para minimizar funciones cuadráticas bidimensionales fuertemente convexas. Estos tamaños de paso conforman el método de gradiente no monóto adaptable (ANGM).
 
-Los tamaños de paso generados por el método BB1 pueden estar muy alejados de los recíprocos de los eigenvalores más grandes de la matriz Hessiana $A$ para la función cuadrática, por lo que los tamaños de paso $\alpha_k^{BB1}$ pueden ser muy grandes para lograr reducir de forma efectiva las componentes  del gradiente $g_k$ que corresponden a los primeros eigenvalores más grandes. Por lo que haciendo uso de $g_{k+1}^{(j)} = (1-\alpha_k\lambda_j)g_k$ se puded observar que estas componentes del gradiente pueden ser reducidas cuando se toman tamaños de paso pequeños. También vale la pena mencionar que cuando los métodos de gradiente utilizan tamaños de paso largos y cortos de forma adaptativa, normalmente tienen un mejor desempeño que si se implementaran estos pasos alternando entre ellos. Entonces, para lograr desarrollar métodos de gradiente que combinan los dos pasos monótonos de BB con el tamaño de paso corto dado por \ref{eq:alpha_tilde} el artículo extiende la propiedad ortogonal desarrollada en el lema \ref{lemma:qk_psi_gk1} y la propiedad de terminación finita del teorema \ref{teo:alpha_tilde}.
+Los tamaños de paso generados por el método BB1 pueden estar muy alejados de los recíprocos de los eigenvalores más grandes de la matriz Hessiana $A$ para la función cuadrática, por lo que los tamaños de paso $\alpha_k^{BB1}$ pueden ser muy grandes para lograr reducir de forma efectiva las componentes  del gradiente $g_k$ que corresponden a los primeros eigenvalores más grandes. Haciendo uso de $g_{k+1}^{(j)} = (1-\alpha_k\lambda_j)g_k$ se puede observar que estas componentes del gradiente pueden ser reducidas cuando se toman tamaños de paso pequeños. También vale la pena mencionar que cuando los métodos de gradiente utilizan tamaños de paso largos y cortos de forma adaptativa, normalmente tienen un mejor desempeño que si se implementaran estos pasos alternando entre ellos. Entonces, para lograr desarrollar métodos de gradiente que combinan los dos pasos monótonos de BB con el tamaño de paso corto dado por \ref{eq:alpha_tilde} el artículo extiende la propiedad ortogonal desarrollada en el lema \ref{lemma:qk_psi_gk1} y la propiedad de terminación finita del teorema \ref{teo:alpha_tilde}.
 
 \begin{lema}[Propiedad de ortogonalidad generalizada]
     Suponga que un método de gradiente con tamaños de paso de la forma \ref{eq:def_alpha_k_psiA} se aplica a minimizar una función cuadrática \ref{eq:quadratic_function}. En particular, al $k-1$-ésimo paso y al $k$-ésimo se utilizan dos tamaños de paso $\alpha_{k-1}(\Psi(A))$ y $\alpha_k(\Psi_1(A))$, respectivamente, donde $\Psi$ y $\Psi_1$ pueden ser dos funciones analíticas diferentes usadas en \ref{eq:def_alpha_k_psiA}. Si $q_k\in\mathbb{R}^n$ satisface
     \begin{equation}
-        (I-\alpha_{k-1}(\Psi(A)A))q_k = g_{k-1},
+        (I-\alpha_{k-1}\Psi(A)A)q_k = g_{k-1},
     \end{equation}
     entonces se tiene
     \begin{equation}
@@ -310,7 +312,7 @@ Los tamaños de paso generados por el método BB1 pueden estar muy alejados de l
 \end{lema}
 
 \begin{teor}[Terminación finita generalizada]
-    Suponga que se aplica un método de gradiente para minimizar una función cuadrática bidimensional \ref{eq:quadratic_function} con $\alpha_k$ dado por \ref{eq:def_alpha_k_psiA} para todo $k\neq k_0$ y $k\neq k_0-1$, y usa los tamaños de paso $\alpha_{k-1}(Psi_1(A))$ y $\alpha_k(\Psi_1(A))$ las iteraciones $k-1$-ésima y la $k$-ésima, respectivamente, donde $k_0\geq 2$. Entonces el método encontrará el minimizador en máximo $k_0+3$.
+    Suponga que se aplica un método de gradiente para minimizar una función cuadrática bidimensional \ref{eq:quadratic_function} con $\alpha_k$ dado por \ref{eq:def_alpha_k_psiA} para todo $k\neq k_0$ y $k\neq k_0-1$, y usa los tamaños de paso $\alpha_{k-1}(Psi_1(A))$ y $\alpha_k(\Psi_1(A))$ las iteraciones $k-1$-ésima y la $k$-ésima, respectivamente, donde $k_0\geq 2$. Entonces el método encontrará el minimizador en máximo $k_0+3$ pasos.
 \end{teor}
 
 El método de gradiente no-monónotono adaptativo (ANGM) toma el paso largo de BB $\alpha_k^{BB1}$ cuando $\alpha_k^{BB2}/\alpha_k^{BB1}\geq \tau_1$ para algún $\tau_1\in(0,1)$. De otra manera, toma un tamaño de paso $\alpha_k^{BB2}$ o $\tilde{\alpha}_k^{BB2}$ dependiendo del cociente $\|g_{k-1}\|/\|g_k\|$. El paso $\alpha_k^{BB2}$ minimiza al gradiente tal que
@@ -378,14 +380,14 @@ por ende
 \end{align*}
 
 por lo que no se requiere calcular productir de matriz-vector adicionales para $\Gamma_{k-1}$ en $\tilde{\alpha}_{k1}^{BB2}$.
-Un problema a tener en cuenta es que el cálculo de $q_k$ de forma exacta como se define en \ref{eq:qdef} puede llegar a ser tan difícil como minimizar la función cuadrática. Es por esto que a la hora de implementar, se puede utilizar una aproximación de $q_k$ notando que satisface la ecuación
+\par Un problema a tener en cuenta es que el cálculo de $q_k$ de forma exacta como se define en \ref{eq:qdef} puede llegar a ser tan difícil como minimizar la función cuadrática. Es por esto que a la hora de implementar, se puede utilizar una aproximación de $q_k$ notando que satisface la ecuación
 
 \begin{equation}
     q_k^Tg_k = \|g_{k-1}\|^2
     \label{eq:secant}
 \end{equation}
 
-De esta manera, se puede encontrar esa aproximación requiriendo que esta condición se mantenga. Una forma eficiente de encontrar la $q_k$ que satisface la ecuación de secante \ref{eq:secant} es tratando a la matriz Hessiana $A$ como una matriz diagonal, y así derivar $q_k$ de $g_{k+1}^{(j)} = (1-\alpha_k\lambda_j)g_k^{(j)}$ cuando $g_k^{(j)}\neq 0$,
+De esta manera, se puede encontrar tal aproximación requiriendo que esta condición se mantenga. Una forma eficiente de encontrar la $q_k$ que satisface la ecuación de secante \ref{eq:secant} es tratando a la matriz Hessiana $A$ como una matriz diagonal, y así derivar $q_k$ de $g_{k+1}^{(j)} = (1-\alpha_k\lambda_j)g_k^{(j)}$ cuando $g_k^{(j)}\neq 0$,
 
 \begin{equation}
     q_k^{(i)} = \frac{g_{k-1}^{(i)}}{1-\alpha_{k-1}\lambda_i} = \frac{(g_{k-1}^{(i)})^2}{g_k^{(i)}}, \ i=1, ..., n
