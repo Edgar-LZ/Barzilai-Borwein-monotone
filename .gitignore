@@ -8,3 +8,7 @@ __pycache__/
 *.bbl
 *.blg
 *.out
+*.nav
+*.snm
+*.toc
+*.vrb
