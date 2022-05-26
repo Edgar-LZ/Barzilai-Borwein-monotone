@@ -1,0 +1,43 @@
+\titleframe
+
+\section{Introducción}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Método Barzilai-Borwein}
+    El estudio de la solución de la optmización de una función cuadratica de la forma
+    \begin{equation}
+        f(x) = \frac{1}{2}x^TAx- b^Tx \label{eq:quadratic_function}
+    \end{equation}
+    donde $b\in\mathbb{R}^n$ y $A$ es una matriz positiva definida en $\mathbb{R}^{n\times n}$, es equivalente a la solución del sistema de ecuaciones
+    \begin{equation*}
+        Ax=b
+    \end{equation*}
+    La elección de los tamaños de paso propuestos estan basados en métodos Cuasi-Newton. Donde $\alpha_k$ es remplazada por la matriz $D_k$ tal que
+    \begin{equation}
+        D_k = \alpha_k \mathit{I}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Método Barzilai-Borwein}
+    El tamaño de paso es calculado a partir de la optimización de $D_k^{-1}$  (BB1) y  $D_k$ (BB2) tal que satisfagan la ecuación de la secante desde un punto de vista de mínimos cuadrados (ecuación \ref{eq:definition_barzilai}).
+    \begin{equation}
+        \min_{D=\alpha \mathit{I}} ||D^{-1}s_{k-1}-y_{k-1}|| \qquad \min_{D=\alpha \mathit{I}} ||s_{k-1}-Dy_{k-1}|| \label{eq:definition_barzilai}
+    \end{equation}
+    donde
+    \begin{equation*}
+        s_{k-1} = x_k - x_{k-1} \qquad y_{k-1} = g_k - g_{k-1}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Método Barzilai-Borwein}
+
+    Las soluciones del problema son las descritas en la ecuación \ref{eq:barzilai_steps}.
+
+    \begin{equation}
+        \alpha^{BB1}_k = \frac{s^T_{k-1}s_{k-1}}{s^T_{k-1}y_{k-1}} \qquad \alpha_k^{BB2} = \frac{s_{k-1}^Ty_{k-1}}{y_{k-1}^Ty_{k-1}} \label{eq:barzilai_steps}
+    \end{equation}
+
+    Considerando la desigualdad de Cauchy-Schwarz observa que cuando $s_{k-1}^Ty_{k-1}$ es mayor a cero, entonces se cumple que $\alpha_k^{BB1} \geq \alpha_k^{BB2}$. Esto por ello, que se suele llamar paso largo e Barzilai-Borwein al paso $\alpha_k^{BB1}$ y paso corto a $\alpha_k^{BB2}$.
+\end{frame}

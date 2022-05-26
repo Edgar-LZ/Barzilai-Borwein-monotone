@@ -1,0 +1,390 @@
+\section{Desarrollo}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Método Barzilai-Borwein}
+    Considérese el problema de acelerar los métodos de descenso de gradiente que generan secuencias de iterados de la forma
+    \begin{equation*}
+        x_{k+1} = x_k - \alpha_k g_k
+    \end{equation*}
+    para resolver el problema
+    \begin{equation*}
+        \min_{x\in\mathbb{R}^n}f(x)
+    \end{equation*}
+    donde $f:\mathbb{R}^n \rightarrow \mathbb{R}^n$ es continuamente diferenciable, $g_k=\nabla f(x_k)$ y $\alpha_k>0$ es el tamaño de paso sobre la dirección del gradiente.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Método Barzilai-Borwein}
+    En particular se usara una función cuadrática (ecuación \ref{eq:quadratic_function}) utilizando el tamaño de paso mostrado en la ecuación \ref{eq:def_alpha_k_psiA}.
+    \begin{equation}
+        \alpha_k(\Psi(A)) = \frac{g_{k-1}^Tg_{k-1}}{g^T_{k-1}\Psi(A)Ag_{k-1}} \label{eq:def_alpha_k_psiA}
+    \end{equation}
+    Donde $\Psi(\cdot)$ es una función real analítica en $[\lambda_1, \lambda_n]$ que se puede expresar como una serie de potencias (ecuación \ref{eq:serie_de_potencias_psi}).
+    \begin{equation}
+        \Psi(z) = \sum\limits_{k=-\infty}^{\infty} c_kz^k,\ c_k\in \mathbb{R}^n  \;\; \text{tal que} \;\; 0<\sum_{k =- \infty}^{\infty}c_k z^k<+\infty \forall z\in[\lambda_1,  \lambda_n]  \label{eq:serie_de_potencias_psi}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Se explotaron algunas propiedades ortogonales en este subespacio bidimensional para acelerar los métodos.
+
+    Es por ello que si se quiere acelerar la convergencia de los métodos con tamaño de paso $\alpha_k$ (ecuación \ref{eq:def_alpha_k_psiA}) en un subespacio de menor dimensionalidad se deben mantener propiedades ortogonales. Suponiendo que para un $k>0$, existe un $q_k$ que satisface
+
+    \begin{equation*}
+        (I-\alpha_{k-1}A)q_k = g_{k-1}
+        \label{eq:qdef}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Con esto, se tiene el lema \ref{lemma:qk_psi_gk1} que presenta una propiedad para la derivación del tamaño de paso.
+    \begin{lema}
+        Suponiendo que la secuencia $\{g_k\}$ se obtiene aplicando un método de gradiente con pasos como el paso general ($\alpha_k)$ para minimizar una función cuadrática y $q_k$ satisface que $(I-\alpha_{k-1}A)q_k = g_{k-1}$. Entonces
+        \begin{equation*}
+            q_k^T\Psi(A)g_{k+1} = 0.
+        \end{equation*}
+        \label{lemma:qk_psi_gk1}
+    \end{lema}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Para probar el lema \ref{lemma:qk_psi_gk1} se tiene que:
+
+    \begin{align*}
+        q_k^T \Psi(A)g_{k+1} & = q_k^T\Psi(A)(I-\alpha_kA)(I-\alpha_{k-1}A)g_{k-1}                                                    \\
+                             & = q_k^T(I-\alpha_kA)\Psi(A)(I-\alpha_{k-1}A)g_{k-1}                                                    \\
+                             & = g_{k-1}^T\Psi(A)(I-\alpha_kA)g_{k-1}                                                                 \\
+                             & =g_{k-1}^T\Psi(A)g_{k-1}-\alpha_kg_{k-1}^T\Psi(A)Ag_{k-1}                                              \\
+                             & =g_{k-1}^T\Psi(A)g_{k-1}\left[\frac{g_{k-1}^T\Psi(A)g_{k-1}}{g_{k-1}^T\Psi(A)Ag_{k-1}}-\alpha_k\right] \\
+                             & = 0
+    \end{align*}
+
+    con lo que se demuestra que el vector $q_k^T$ y $g_{k+1}$ son ortogonales bajo $\Psi(A)$.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Considerando el problema de minimizar una función $f$ en un subespacio bidimensional generado por
+    \begin{equation}
+        u = \frac{\Psi^r(A)q_{k-1}}{|\Psi^r(A)q_{k-1}|} \qquad
+        v = \frac{\Psi^r(A)g_{k}}{|\Psi^r(A)g_{k}|} \label{eq:u_v}
+    \end{equation}
+    donde $u$ y $v$ forman una base ortogonal para $\mathbb{R}^2$. Defindiendo una función $\phi$ como
+    \begin{equation}
+        \phi(t,l):=f\left(x_k+t\frac{\Psi^r(A)q_{k-1}}{\|\Psi^r(A)q_{k-1}\|} + l \frac{\Psi^r(A)g_{k}}{\|\Psi^r(A)g_{k}\|}\right) \label{eq:phi_definition}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    al expandir en una serie de Taylor obtenemos que
+    \begin{equation}
+        \phi(t,l) = f(x_k)+\nabla^T f(x_k) \left[tu+lv \right] + \frac{1}{2}\left[tu+ lv \right]^T\nabla^2 f(x_k) \left[tu+lv \right] \label{eq:phi_taylor}
+    \end{equation}
+    Tomando a una matriz $B_k$ como en la ecuación \ref{eq:matrix_bk}.
+    \begin{equation}
+        B_k =  \left(u, v\right)^T \label{eq:matrix_bk}
+    \end{equation}
+    Con las ecuaciones \ref{eq:u_v} y \ref{eq:matrix_bk} podemos escribir la ecuación \ref{eq:phi_taylor} como en la ecuación \ref{eq:phi_u_v_bk}.
+    \begin{equation}
+        \phi(t, l) =  f(x_k)+g_k^TB_k^T\begin{pmatrix}t\\l\end{pmatrix} +\frac{1}{2}\begin{pmatrix}t\\l\end{pmatrix}^TB_k A B_k^T\begin{pmatrix}t\\l\end{pmatrix} \label{eq:phi_u_v_bk}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Definiendo el vector $\vartheta$ como
+    \begin{equation}
+        \vartheta_k = B_kg_k =
+        \begin{pmatrix}
+            \frac{g_k^T\Psi^r(A)q_{k-1}}{|\Psi^{r}(A)q_{k-1}|} \\[0.25cm]
+            \frac{g_k^T\Psi^{1-r}(A)g_k}{|\Psi^{1-r}(A)g_k|}
+        \end{pmatrix}
+        \label{eq:vartheta_k}
+    \end{equation}
+    y al hessiano de $f$ en el paso $k$ como
+    \begin{equation}
+        H_k = B_kAB_k^T =\begin{pmatrix}
+            \frac{q_{k-1}^T\Psi^{2r}(A)Aq_{k-1}}{\|\Psi^{r}(A)q_{k-1}\|^2}             & \frac{q_{k-1}^T\Psi^r(A)Ag_{k}}{\|\Psi^{r}(A)q_{k-1}\|\Psi^{1-r}(A)g_k\| } \\
+            \frac{q_{k-1}^T\Psi^r(A)Ag_{k}}{\|\Psi^{r}(A)q_{k-1}\|\Psi^{1-r}(A)g_k\| } &
+            \frac{g_k^T\Psi^{2(1-r)}(A)Ag{k}}{\|\Psi^{r}(A)g_k\|^2}
+        \end{pmatrix} \label{eq:hk_bkabk}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Entonces la función $f\phi(t, l)$ se puede escribir como en la ecuación \ref{eq:phi_with_vectors}.
+    \begin{equation}
+        \phi(t, l) =  f(x_k)+\vartheta_k^T
+        \begin{pmatrix}
+            t \\l
+        \end{pmatrix} +\frac{1}{2}
+        \begin{pmatrix}
+            t \\l
+        \end{pmatrix}^T
+        H_k
+        \begin{pmatrix}
+            t \\l
+        \end{pmatrix} \label{eq:phi_with_vectors}
+    \end{equation}
+    Denotando las componentes de $H_k$ por $H_k^(ij)$, $i,j = 1,2$ y notando que $B_kB^T_k = I$ se tiene el teorema \ref{teo:alpha_tilde}.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    \begin{teor}[Terminación finita]
+
+        Suponga que un método de gradiente se aplica para minimizar una función cuadrá\-tica bidimensional con $\alpha_k$ dado por el paso general mencionado anteriormente para todas las $k\neq k_0$ y usa el tamaño de paso
+
+        \begin{equation*}
+            \tilde{\alpha}_{k_0} = \frac{2}{\left(H^{(11)}_{k_0} + H^{(22)}_{k_0}\right)+\sqrt{\left(H^{(11)}_{k_0} - H^{(22)}_{k_0}\right)^2 } + 4\left(H_{k_0}^{(12)}\right)^2}
+        \end{equation*}
+
+        en la iteración $k_0$-ésima donde $k_0\geq 2$. Entonces, el método encontrará el minimizador en máximo $k_0+3$ iteraciones.
+        \label{teo:alpha_tilde}
+    \end{teor}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Para demostrar el teorema \ref{teo:alpha_tilde} suponemos que $x_k$ no es un minimizador para toda $k=1, ..., k_0+1$. Para simplificar durante la prueba, se utilizará comom notación $k$ para referirse a $k_0$.
+
+    Es necesario observar que $\tilde{\alpha_k}$ satisface la ecuación \ref{eq:alpha_tilde}.
+
+    \begin{equation}
+        \tilde{\alpha}^2_k\Delta-\tilde{\alpha}_k\left(H^{(11)}_k + H_k^{(22)}\right) + 1 = 0
+        \label{eq:alpha_tilde}
+    \end{equation}
+
+    en donde $\Delta = \det{(H_k)}$ = $\det{(A)}>0$.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    \vspace{-0.4cm}
+    Sea
+    \begin{equation*}
+        \Theta = \left(H_k^{(12)}\vartheta_k^{(1)}+ H_k^{(22)}\vartheta^{(2)}_k\right)\vartheta_k^{(1)} -  \left(H_k^{(11)}\vartheta_k^{(1)}+ H_k^{(12)}\vartheta^{(2)}_k\right)\vartheta_k^{(2)}
+    \end{equation*}
+    en donde $\vartheta_k^{(i)}$ son las componentes de $\vartheta_k$. Multiplicando $\Theta$ a la ecuación \ref{eq:alpha_tilde} se tiene lo siguiente
+    \begin{equation*}
+        \tilde{\alpha}_k^2\Delta\Theta-\tilde{\alpha_k}\left(H_k^{(11)}+H_k^{(12)}\right)\Theta + \Theta = 0,
+    \end{equation*}
+    que exactamente es
+    \begin{equation*}
+        ab =cd
+    \end{equation*}
+    donde
+    \begin{align*}
+        a & = H_k^{(22)}v_k^{1}-H_k^{(12)}v_k^{(2)}-\tilde{\alpha}_k\Delta\vartheta_k^{(1)} & b  = \vartheta_k ^{(2)}-\tilde{\alpha}_k(H_k^{(12)}\vartheta_k^{(1)}+H_k^{(22)}\vartheta_k^{(2)})  \\
+        c & = H_k^{(11)}v_k^{2}-H_k^{(12)}v_k^{(1)}-\tilde{\alpha}_k\Delta\vartheta_k^{(1)} & d  = \vartheta_k ^{(1)}-\tilde{\alpha}_k(H_k^{(11)}\vartheta_k^{(1)}+H_k^{(12)}\vartheta_k^{(2)}).
+    \end{align*}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Consideremos dos vectores $\boldsymbol{A} = (a_1, a_2)^T$ y $\boldsymbol{B} = (b_1, b_2)^T$, tales que se cumple $a_1b_2 = a_2b_1$. Sustituyendo $b_2$ en $\boldsymbol{B}$, tenemos lo siguiente
+
+    \begin{equation*}
+        \boldsymbol{B} = \begin{pmatrix}
+            b_1 \\
+            \frac{b_1a_2}{a_1}
+        \end{pmatrix} = \frac{b_1}{a_1}\boldsymbol{A}
+    \end{equation*}
+    por los que podemos decir que $\boldsymbol{B}$ es paralelo a $\boldsymbol{A}$.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Haciendo uso del resultado anterior podemos decir que el vector
+    \begin{equation*}
+        \begin{pmatrix}
+            H_k^{(22)}\vartheta_k^{(1)}-H_k^{(12)}\vartheta_k^{(2)}-\tilde{\alpha}_k\Delta\vartheta_k^{(1)} \\[0.25cm]
+            H_k^{(11)}\vartheta_k^{(2)}-H_k^{(12)}\vartheta_k^{(1)}-\tilde{\alpha}_k\Delta\vartheta_k^{(2)}
+        \end{pmatrix}
+    \end{equation*}
+    es paralelo a
+    \begin{equation*}
+        \begin{pmatrix}
+            v_k^{(1)} - \tilde{\alpha}_k(H_k^{(11)}\vartheta_k^{(1)}+H_k^{(12)}\vartheta_k^{(2)}) \\[0.25cm]
+            v_k^{(2)} - \tilde{\alpha}_k(H_k^{(12)}\vartheta_k^{(1)}+H_k^{(22)}\vartheta_k^{(2)})
+        \end{pmatrix}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Por ende el vector $\vartheta_k+H_k(-\tilde{\alpha}_k\vartheta_k)$ es paralelo a  $H_k^{-1}\vartheta_j-\tilde{\alpha}_k\vartheta_k$. Es decir
+    \begin{equation}
+        \vartheta_k+H_k(-\tilde{\alpha}_k\vartheta_k) = \gamma(H_k^{-1}\vartheta_j-\tilde{\alpha}_k\vartheta_k) \label{eq:vartheta_hk}
+    \end{equation}
+    donde $\gamma\neq 0  \in \mathbb{R}$. Si multiplicamos por la derecha a la ecuación \ref{eq:vartheta_hk} por $B_k^T$ se tiene que
+    \begin{equation*}
+        B_k^T[\vartheta_k+H_k(-\tilde{\alpha}_k\vartheta_k)] = \gamma B_k^T(H_k^{-1}\vartheta_j-\tilde{\alpha}_k\vartheta_k).
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Se sabe que $B^T_kB_k = I$, $\vartheta_k = B_kg_k$ y que $H_k = B_kAB_k^T$. Además $g_{k+1} = g_k+\tilde{\alpha}_kAg_k$. Haciendo uso de este conocimiento, se obtiene que
+    \begin{align*}
+        g_k+A(-\tilde{\alpha}_kB^T_k\vartheta_k) & = \gamma(B_k^TH_k^{-1}\vartheta_k+\tilde{\alpha}_kg_k)       \\
+        g_k+A(-\tilde{\alpha}_kg_k)              & = \gamma(B_k^TH_k^{-1}\vartheta_k+\tilde{\alpha}_kg_k)       \\
+        g_{k+1}                                  & = \gamma(B_k^TH_k^{-1}\vartheta_k+\tilde{\alpha}_kg_k)       \\
+        g_{k+1}                                  & = \gamma(B_k^TB_kA^{-1}B_k^T\vartheta_k+\tilde{\alpha}_kg_k) \\
+        g_{k+1}                                  & = \gamma(A^{-1}g_k+\tilde{\alpha}_kg_k)
+    \end{align*}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Factorizando $A^{-1}$ se tiene
+    \begin{equation*}
+        g_{k+1} = \gamma A^{-1}(g_k+\tilde{\alpha}_kAg_k)
+    \end{equation*}
+    Considerando que $g_{k+1} = g_k+\tilde{\alpha}_kAg_k$ llegamos a
+    \begin{equation*}
+        g_{k+1} = \gamma A^{-1}g_{k+1}
+    \end{equation*}
+    Es decir $g_{k+1}$ es un eigenvector de la matriz $A$.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Por hipótesis, sabemos que $x_{k+2}$ no es un minimizador, así que $g_{k+2}\neq 0$ y el algoritmo no se detendrá en la $k+2$-ésima iteración. Entonces, calculando $\alpha_{k+2}$ como
+    \begin{equation*}
+        \alpha_{k+2}= \frac{g_{k+1}^T\Psi(A)g_{k+1}}{g_{k+1}^T\Psi(A)Ag_{k+1}} = 1/\lambda
+    \end{equation*}
+    tenemos que
+    \begin{align*}
+        g_{k+3} & = (I-\alpha_{k+2}A)g_{k+2}         \\
+                & = (1-\alpha_{k+2}\lambda)g_{k+2}=0
+    \end{align*}
+    lo que implica que $x_{k+3}$ debe ser el minimizador. Si tomamos $k_0 =2$ en el teorema, el tamaño de paso encontrará al minimizador exacto en máximo 5 iteraciones cuando se tiene una función cuadrática bidimensional fuertemente convexa.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    \begin{corollary}
+        Suponga que un método de gradiente se aplica a una función cuadrática bidimensional con $\alpha_{k_0+m}$ para $k_0\geq 2$, algún entero positivo $m$ y con $\alpha_{k_0+m}= \tilde{\alpha_{k_0}}$ para toda $k\neq k_0+m$. Entonces, el método se detendrá en máximo $k+m+3$ iteraciones.
+    \end{corollary}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    Si hacemos $\Psi(A)= I$, $\Psi(A)= A$ y $r=1/2$ en la ecuación \ref{eq:def_alpha_k_psiA} y tomando $k_0=k$ se puede derivar los siguientes tamaños de paso:
+    \begin{equation}
+        \tilde{\alpha}_k^{BB1} = \frac{2}{\frac{q_{k-1}^TAq_{k-1}}{\|q_{k-1}\|^2} + \frac{1}{\alpha_k^{SD}}+\sqrt{ \left(\frac{q_{k-1}^TAq_{k-1}}{\|q_{k-1}\|^2} -\frac{1}{\alpha_{k}^{SD}} \right)^2 + \frac{4\left(q_k^TAg_k\right)^2}{\|q_{k-1}\|^2\|g_k\|^2} }}
+        \label{eq:alphakBB1new}
+    \end{equation}
+    \begin{equation}
+        \tilde{\alpha}_k^{BB2} = \frac{2}{\frac{1}{\hat{\alpha}_{k-1}} +\frac{1}{\alpha_k^{MG}} + \sqrt{\left( \frac{1}{\hat{\alpha}_{k-1}}+ - \frac{1}{\alpha_k^{MG}}  \right) ^2 + \Gamma_k} }
+        \label{eq:alphakBB2new}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    en donde
+    \begin{equation}
+        \hat{\alpha}_k = \frac{q_k^TAq_k}{q_k^TA^2q_k} \text{ \ y \ } \Gamma_k = \frac{4\left(q_{k-1}A^2g_k\right)^2}{q_{k-1}^TAq_{k-1}g_k^TAg_k}
+    \end{equation}
+    Ahora, de \ref{eq:alphakBB1new} y \ref{eq:alphakBB2new} se tiene
+    \begin{equation}
+        \tilde{\alpha}_k^{BB1}\leq\min{\left\{\alpha_k^{SD}, \frac{\|q_{k-1}\|^2}{q_{k-1}^{T}Aq_{k-1}}\right\}} \text{ \ y \ } \tilde{\alpha}_k^{BB2}\leq \min{\left\{\alpha_k^{MG}, \hat{\alpha}_{k-1}\right\}} \label{eq:alphabounds}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Tamaño de paso}
+    El método de gradiente no-monónotono adaptativo (ANGM) toma el paso largo de BB $\alpha_k^{BB1}$ cuando $\alpha_k^{BB2}/\alpha_k^{BB1}\geq \tau_1$ para algún $\tau_1\in(0,1)$. De otra manera, toma un tamaño de paso $\alpha_k^{BB2}$ o $\tilde{\alpha}_k^{BB2}$ dependiendo del cociente $\|g_{k-1}\|/\|g_k\|$. El paso $\alpha_k^{BB2}$ minimiza al gradiente tal que
+
+    \begin{equation*}
+        \alpha_k^{BB2}=\alpha_{k-1}^{MG} =\arg\min_{\alpha\in\mathbb{R}}{\|g_{k-1}-\alpha Ag_{k-1}\|}.
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{ANGM}
+    El ANGM utiliza el tamaño de paso monótono $\tilde{\alpha}_k^{BB2}$ cuando $\|g_{k-1}\|>\tau_2\|g_k\|$, de otra manera se deberían tomar ciertos pasos BB2.
+    El ANGM aplica las siguientes estrategias adaptativas para elegir el tamaño de paso:
+    \begin{equation}
+        \alpha_k =\begin{cases} \min\{\alpha_k^{BB2}, \alpha_{k-1}^{BB2}\}, \text{ \ si \ } \alpha_k^{BB2}<\tau_1\alpha_k^{BB1}\text{ \ y \ } \|g_{k-1}\|<\tau_2\|g_k\| \\\\
+            \tilde{\alpha}_k^{BB2}, \text{ \ si \ } \alpha_k^{BB2} < \tau_1\alpha_k^{BB1} \text{ \ y \ } \|g_{k-1}\|\geq \|g_k\|                    \\\\
+            \alpha_k^{BB1}, \text{ \ de otro modo \ }
+        \end{cases}
+        \label{eq:ANGM}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{ANGR1}
+    Se ha encontrado que los métodos de gradiente que utilizan pasos retardados pueden llevar a mejores desempeños, así reemplazando $\tilde{\alpha}_k^{BB2}$ en \ref{eq:ANGM} por $\tilde{\alpha}_{k-1}^{BB2}$ se obtiene una variante llamada ANGR1:
+    \begin{equation}
+        \alpha_k =\begin{cases} \min\{\alpha_k^{BB2}, \alpha_{k-1}^{BB2}\}, \text{ \ si \ } \alpha_k^{BB2}<\tau_1\alpha_k^{BB1}\text{ \ y \ } \|g_{k-1}\|<\tau_2\|g_k\| \\\\
+            \tilde{\alpha}_{k-1}^{BB2}, \text{ \ si \ } \alpha_k^{BB2} < \tau_1\alpha_k^{BB1} \text{ \ y \ } \|g_{k-1}\|\geq \|g_k\|                \\\\
+            \alpha_k^{BB1}, \text{ \ de otro modo \ }
+        \end{cases}
+        \label{eq:ANGR1}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{ANGR2}
+    Ahora, para simplificar el ANGR1 se puede remplazar $\tilde{\alpha}_{k-1}^{BB2}$ por su cota superior, es decir, se puede hacer uso de:
+    \begin{equation*}
+        \alpha_{k-1}^{BB2}\leq \min{\{\alpha_k^{BB2}, \hat{\alpha}_{k-2}\}}
+    \end{equation*}
+    Como resultado de esto, se obtiene otra variante de ANGM a la que se llama $ANGR2$:
+    \begin{equation}
+        \alpha_k \begin{cases} \min\{\alpha_k^{BB2}, \alpha_{k-1}^{BB2}\}, \text{ \ si \ } \alpha_k^{BB2}<\tau_1\alpha_k^{BB1}\text{ \ y \ } \|g_{k-1}\|<\tau_2\|g_k\|    \\\\
+            \min{\{\alpha_k^{BB2}, \hat{\alpha}_{k-2}\}}, \text{ \ si \ } \alpha_k^{BB2} < \tau_1\alpha_k^{BB1} \text{ \ y \ } \|g_{k-1}\|\geq \|g_k\| \\\\
+            \alpha_k^{BB1}, \text{ \ de otro modo \ }
+        \end{cases}
+        \label{eq:ANGR2}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{ANGM, ANGR1 y ANGR2}
+    Es necesario notar que para la implementación de los métodos ANGM, ANGR1 y ANGR2 no es necesario calcular productos de matriz-vector.
+    \begin{equation}
+        \hat{\alpha}_k= \frac{q_k^T A q_k}{q_k^T A^2 q_k} = \frac{\alpha_{k-1}q_k^T(q_k-g_{k-1})}{(q_k - g_{k-1})^T(q_k-g_{k-1})}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{ANGM, ANGR1 y ANGR2}
+    Debido a que el cálculo de $Ag_k$ se necesita para el término $g_{k+1}$ y $\Gamma_k$ en $\tilde{\alpha}_k^{BB2}$. Para $\tilde{\alpha}_{k-1}^{BB2}$, se necesita el calculo del término
+    \begin{equation*}
+        g_{k-1}^TA^2q_{k-2} = \frac{1}{\alpha_{k-3}}(q_{k-2}-g_{k-3})^TAg_{k-1} \qquad Ag_{k-1}=\frac{1}{\alpha_{k-1}}(g_{k-1}-g_k)
+    \end{equation*}
+    por ende
+    \begin{equation*}
+        \Gamma_{k-1}  = \frac{4((q_{k-2}-g_{k-3})^T(g_{k-1}-g_k))^2}{\alpha_{k-3}\alpha_{k-1}((q_{k-2}-g_{k-3})^Tq_{k-2})g_{k-1}^T(g_{k-1}-g_k)}
+    \end{equation*}
+    por lo que no se requiere calcular productir de matriz-vector adicionales para $\Gamma_{k-1}$ en $\tilde{\alpha}_{k1}^{BB2}$.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{ANGM, ANGR1 y ANGR2}
+    Un problema a tener en cuenta es que el cálculo de $q_k$ de forma exacta como se define en \ref{eq:qdef} puede llegar a ser tan difícil como minimizar la función cuadrática. Es por esto que a la hora de implementar, se puede utilizar una aproximación de $q_k$ notando que satisface la ecuación
+
+    \begin{equation}
+        q_k^Tg_k = \|g_{k-1}\|^2
+        \label{eq:secant}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{ANGM, ANGR1 y ANGR2}
+    Una forma eficiente de encontrar la $q_k$ que satisface la ecuación de secante \ref{eq:secant} es tratando a la matriz Hessiana $A$ como una matriz diagonal, y así derivar $q_k$ de $g_{k+1}^{(j)} = (1-\alpha_k\lambda_j)g_k^{(j)}$ cuando $g_k^{(j)}\neq 0$,
+    \begin{equation}
+        q_k^{(i)} = \frac{g_{k-1}^{(i)}}{1-\alpha_{k-1}\lambda_i} = \frac{(g_{k-1}^{(i)})^2}{g_k^{(i)}}, \ i=1, ..., n
+    \end{equation}
+    y en el caso de que $g_k^{(i)}=0$ se hace $q_k^{(i)}=0$.
+\end{frame}

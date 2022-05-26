@@ -1,0 +1,116 @@
+\section{Resultados}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Función de Rosembrock}
+    La función de Rosembrock se define en la ecuación \ref{eq:rosembrock}.
+
+    \begin{equation}
+        f(x) = \sum_{i=1}^{n-1}  100(x_{i+1}-x_{i}^2)^2 +(1-x_i)
+        \label{eq:rosembrock}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Función Wood}
+    La función de Wood se define en la ecuación \ref{eq:wood}.
+
+    \tiny
+    \begin{equation}
+        f(x) = 100(x_1^2-x_2)^2+(x_1-1)^2+(x_3-1)^2+90(x_3-x_4)^2 +10.1((x_2-1)^2+(x_4-1)^2)+19.8(x_2-1)(x_4-1) \label{eq:wood}
+    \end{equation}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Función Lambda}
+    En el artículo de Yakui Huang se utiliza una función definida de la siguiente manera:
+
+    \begin{equation*}
+        f(x) = \frac{1}{2}x^TAx \qquad A=\begin{cases}
+            0                           & \text{para } i\neq 0 \\
+            10^{\frac{ncond}{n-1}(n-j)} & \text{para } i=j
+        \end{cases}
+    \end{equation*}
+
+    donde $ncond=log \kappa$ con $\kappa = 10^3$ y $n=10$.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Función cuadrática}
+    En el mismo artículo\cite{huang_2022_1} se propone una función cuadrática donde la matriz esta definida de la siguiente manera:
+
+    \begin{equation*}
+        A = diag\{1,\lambda\}
+    \end{equation*}
+
+    En nuestro caso tomamos $\lambda=10$.
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Porcentaje de contribución}
+    Se definió una función $\gamma$ para medir el porcentaje de las dos componentes más grandes del gradiente en cada iteración de la optimización. La función $\gamma$ tiene la siguiente forma
+
+    \begin{equation*}
+        \gamma(g_k) = \frac{|g_k^{(1)}|+|g_k^{(2)}|}{\sum\limits_i |g_k^{(i)}|}
+    \end{equation*}
+
+    Realizando el calculo de la función $\gamma$ con la función lambda en el punto inicial $x=(10,10,\dots,10)^T$ se obtuvieron los resultados mostrados en la figura \ref{fig:gamma} para los diferentes métodos.
+\end{frame}
+
+\begin{frame}
+    \vspace{0.5cm}
+    \begin{figure}[H]
+        \begin{subfigure}{7cm}
+            \includegraphics[width=1\textwidth]{Graphics/gamma/barzilai.png}
+            \caption{Método BB.}
+        \end{subfigure}
+        \begin{subfigure}{7cm}
+            \includegraphics[width=1\textwidth]{Graphics/gamma/ANGM.png}
+            \caption{Método ANGM.}
+        \end{subfigure}
+        \begin{subfigure}{7cm}
+            \includegraphics[width=1\textwidth]{Graphics/gamma/ANGR1.png}
+            \caption{Método ANGR1}
+        \end{subfigure}
+        \begin{subfigure}{7cm}
+            \includegraphics[width=1\textwidth]{Graphics/gamma/ANGR1.png}
+            \caption{Método ANGR2.}
+        \end{subfigure}
+        \caption{\small Función $\gamma$ para diferentes métodos (izquierda) y la posición en el vector de la componente más grande (derecha).}
+        \label{fig:gamma}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Porcentaje de contribución}
+    \input{Tables/gamma.tex}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Estabilidad de resultados}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=10cm]{Graphics/function/quadratic.png}
+        \caption{Valor de la función y norma del gradiente en cada iteración de la mejor ejecución de cada método de optimización de la función cuadrática con matriz diagonal.}
+        \label{fig:quadracic_function}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{\insertsectionhead}
+    \framesubtitle{Estabilidad de resultados}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=10cm]{Graphics/function/rosembrock.png}
+        \caption{Valor de la función y norma del gradiente en cada iteración de la mejor ejecución de cada método de optimización de la función de Rosembrock con matriz diagonal.}
+        \label{fig:rosembrock_function}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \vspace{0.5cm}
+    \input{Tables/mean.tex}
+\end{frame}
+
+\begin{frame}
+    \vspace{0.5cm}
+    \input{Tables/std.tex}
+\end{frame}
