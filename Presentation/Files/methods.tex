@@ -15,11 +15,11 @@
 
 \begin{frame}{\insertsectionhead}
     \framesubtitle{Método Barzilai-Borwein}
-    En particular se usara una función cuadrática (ecuación \ref{eq:quadratic_function}) utilizando el tamaño de paso mostrado en la ecuación \ref{eq:def_alpha_k_psiA}.
+    En particular se considerará una función cuadrática de la forma \ref{eq:quadratic_function} utilizando el tamaño de paso mostrado en la ecuación \ref{eq:def_alpha_k_psiA}.
     \begin{equation}
         \alpha_k(\Psi(A)) = \frac{g_{k-1}^Tg_{k-1}}{g^T_{k-1}\Psi(A)Ag_{k-1}} \label{eq:def_alpha_k_psiA}
     \end{equation}
-    Donde $\Psi(\cdot)$ es una función real analítica en $[\lambda_1, \lambda_n]$ que se puede expresar como una serie de potencias (ecuación \ref{eq:serie_de_potencias_psi}).
+    Donde $\Psi(\cdot)$ es una función real analítica en $[\lambda_1, \lambda_n]$ que se puede expresar como una serie de Laurent (ecuación \ref{eq:serie_de_potencias_psi}).
     \begin{equation}
         \Psi(z) = \sum\limits_{k=-\infty}^{\infty} c_kz^k,\ c_k\in \mathbb{R}^n  \;\; \text{tal que} \;\; 0<\sum_{k =- \infty}^{\infty}c_k z^k<+\infty \forall z\in[\lambda_1,  \lambda_n]  \label{eq:serie_de_potencias_psi}
     \end{equation}
@@ -96,7 +96,7 @@
 
 \begin{frame}{\insertsectionhead}
     \framesubtitle{Tamaño de paso}
-    Definiendo el vector $\vartheta$ como
+    Se define el vector $\vartheta$ como
     \begin{equation}
         \vartheta_k = B_kg_k =
         \begin{pmatrix}
@@ -105,7 +105,7 @@
         \end{pmatrix}
         \label{eq:vartheta_k}
     \end{equation}
-    y al hessiano de $f$ en el paso $k$ como
+    y a la matriz $H_k$ como
     \begin{equation}
         H_k = B_kAB_k^T =\begin{pmatrix}
             \frac{q_{k-1}^T\Psi^{2r}(A)Aq_{k-1}}{\|\Psi^{r}(A)q_{k-1}\|^2}             & \frac{q_{k-1}^T\Psi^r(A)Ag_{k}}{\|\Psi^{r}(A)q_{k-1}\|\Psi^{1-r}(A)g_k\| } \\
@@ -117,7 +117,7 @@
 
 \begin{frame}{\insertsectionhead}
     \framesubtitle{Tamaño de paso}
-    Entonces la función $f\phi(t, l)$ se puede escribir como en la ecuación \ref{eq:phi_with_vectors}.
+    Es posible expresar la función $\phi(t, l)$ como en la ecuación \ref{eq:phi_with_vectors}.
     \begin{equation}
         \phi(t, l) =  f(x_k)+\vartheta_k^T
         \begin{pmatrix}
@@ -131,7 +131,7 @@
             t \\l
         \end{pmatrix} \label{eq:phi_with_vectors}
     \end{equation}
-    Denotando las componentes de $H_k$ por $H_k^(ij)$, $i,j = 1,2$ y notando que $B_kB^T_k = I$ se tiene el teorema \ref{teo:alpha_tilde}.
+    Denotando las componentes de $H_k$ por $H_k^{ij}$, $i,j = 1,2$ y notando que $B_kB^T_k = I$ se tiene el teorema \ref{teo:alpha_tilde}.
 \end{frame}
 
 \begin{frame}{\insertsectionhead}
@@ -151,7 +151,7 @@
 
 \begin{frame}{\insertsectionhead}
     \framesubtitle{Tamaño de paso}
-    Para demostrar el teorema \ref{teo:alpha_tilde} suponemos que $x_k$ no es un minimizador para toda $k=1, ..., k_0+1$. Para simplificar durante la prueba, se utilizará comom notación $k$ para referirse a $k_0$.
+    Para demostrar el teorema \ref{teo:alpha_tilde} se supone que $x_k$ no es un minimizador para toda $k=1, ..., k_0+2$. Para simplificar durante la prueba, se utilizará comom notación $k$ para referirse a $k_0$.
 
     Es necesario observar que $\tilde{\alpha_k}$ satisface la ecuación \ref{eq:alpha_tilde}.
 

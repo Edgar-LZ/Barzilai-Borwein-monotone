@@ -8,7 +8,7 @@
     \begin{equation}
         f(x) = \frac{1}{2}x^TAx- b^Tx \label{eq:quadratic_function}
     \end{equation}
-    donde $b\in\mathbb{R}^n$ y $A$ es una matriz positiva definida en $\mathbb{R}^{n\times n}$, es equivalente a la solución del sistema de ecuaciones
+    donde $b\in\mathbb{R}^n$ y $A$ es una matriz definida positiva en $\mathbb{R}^{n\times n}$ resulta ser una base importante a la hora de resolver problemas más complejos. El resolver este problema equivalente a encontrar la solución del sistema de ecuaciones
     \begin{equation*}
         Ax=b
     \end{equation*}
@@ -39,5 +39,5 @@
         \alpha^{BB1}_k = \frac{s^T_{k-1}s_{k-1}}{s^T_{k-1}y_{k-1}} \qquad \alpha_k^{BB2} = \frac{s_{k-1}^Ty_{k-1}}{y_{k-1}^Ty_{k-1}} \label{eq:barzilai_steps}
     \end{equation}
 
-    Considerando la desigualdad de Cauchy-Schwarz observa que cuando $s_{k-1}^Ty_{k-1}$ es mayor a cero, entonces se cumple que $\alpha_k^{BB1} \geq \alpha_k^{BB2}$. Esto por ello, que se suele llamar paso largo e Barzilai-Borwein al paso $\alpha_k^{BB1}$ y paso corto a $\alpha_k^{BB2}$.
+    Al considerar la desigualdad de Cauchy-Schwarz observa que cuando $s_{k-1}^Ty_{k-1}$ es mayor a cero, se cumple que $\alpha_k^{BB1} \geq \alpha_k^{BB2}$. Debido a esto se suele llamar a $\alpha_k^{BB1}$ tamaño de paso largo de Barzilai-Borwein y paso corto a $\alpha_k^{BB2}$.
 \end{frame}
