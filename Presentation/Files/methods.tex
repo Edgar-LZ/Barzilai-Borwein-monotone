@@ -17,7 +17,7 @@
     \framesubtitle{Método Barzilai-Borwein}
     En particular se considerará una función cuadrática de la forma \ref{eq:quadratic_function} utilizando el tamaño de paso mostrado en la ecuación \ref{eq:def_alpha_k_psiA}.
     \begin{equation}
-        \alpha_k(\Psi(A)) = \frac{g_{k-1}^Tg_{k-1}}{g^T_{k-1}\Psi(A)Ag_{k-1}} \label{eq:def_alpha_k_psiA}
+        \alpha_k(\Psi(A)) = \frac{g_{k-1}^T\Psi(A)g_{k-1}}{g^T_{k-1}\Psi(A)Ag_{k-1}} \label{eq:def_alpha_k_psiA}
     \end{equation}
     Donde $\Psi(\cdot)$ es una función real analítica en $[\lambda_1, \lambda_n]$ que se puede expresar como una serie de Laurent (ecuación \ref{eq:serie_de_potencias_psi}).
     \begin{equation}
